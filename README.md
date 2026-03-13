@@ -1,2 +1,1 @@
-# Mushroom-identification-application
-麻姑
+# AI-Based Mushroom Identification Using Image Recognition and Trait-Based Classification
