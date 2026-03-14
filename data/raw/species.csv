@@ -1,0 +1,21 @@
+species_id,scientific_name,swedish_name,english_name,edible,toxicity_level,priority_lookalike
+CH001,Cantharellus cibarius,Kantarell,Chanterelle,TRUE,SAFE,FALSE_CH
+BU001,Boletus edulis,Karljohan,Porcini,TRUE,SAFE,BITTER_BOLETE
+MO001,Morchella esculenta,Morkel,Morel,TRUE,SAFE,FALSE_MOREL
+BA001,Boletus badius,Brunsopp,Bay Bolete,TRUE,SAFE,BITTER_BOLETE
+HO001,Armillaria mellea,Hallon,Honey Mushroom,TRUE,SAFE,FUNERAL_BELL
+WO001,Auricularia auricula-judae,Träöra,Wood Ear,TRUE,SAFE,NONE
+PU001,Lycoperdon perlatum,Rökslöjpa,Puffball,TRUE,SAFE,DEATH_CAP
+OY001,Pleurotus ostreatus,Ostronskivling,Oyster Mushroom,TRUE,SAFE,NONE
+OR001,Lactarius deliciosus,Smörkantarell,Orange Milk Cap,TRUE,SAFE,FALSE_MILK_CAP
+CH002,Laetiporus sulphureus,Kejsarsvamp,Chicken of the Woods,TRUE,SAFE,NONE
+SI001,Coprinellus comatus,Spindelskivling,Shaggy Inkcap,TRUE,SAFE,NONE
+PA001,Macrolepiota procera,Parasolsvamp,Parasol Mushroom,TRUE,SAFE,AMANITA_SPECIES
+ME001,Agaricus campestris,Ängssvamp,Meadow Mushroom,TRUE,SAFE,DEATH_CAP
+DEATH,Amanita phalloides,Dödskallesvamp,Death Cap,FALSE,EXTREMELY_TOXIC,NONE
+DESTROY,Amanita virosa,Änglsvamp,Destroying Angel,FALSE,EXTREMELY_TOXIC,NONE
+FLY,Amanita muscaria,Flugsvamp,Fly Agaric,FALSE,TOXIC,NONE
+FALSE_CH,Hygrophorellus pseudoaurantiacus,Falsk kantarell,False Chanterelle,FALSE,TOXIC,CH001
+BITTER_BOLETE,Caloboletus castaniceps,Bitter karljohan,Bitter Bolete,FALSE,TOXIC,BU001
+FALSE_MOREL,Gyromitra esculenta,Falsk morkel,False Morel,FALSE,TOXIC,MO001
+FUNERAL_BELL,Galerina marginata,Små änglsvamp,Funeral Bell,FALSE,EXTREMELY_TOXIC,HO001
