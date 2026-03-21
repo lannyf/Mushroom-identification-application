@@ -135,7 +135,7 @@ class TraitEncoder:
         
         return np.array(features, dtype=np.float32)
     
-    def fit_transform(self, df: pd.DataFrame) -> Tuple[np.ndarray, List[str]]:
+    def fit_transform(self, df: pd.DataFrame) -> List[str]:
         """Fit encoder and transform data."""
         self.fit(df)
         return self.feature_names

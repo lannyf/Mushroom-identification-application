@@ -321,8 +321,8 @@ class ImageRecognitionModel:
             import tensorflow as tf
             self.model = tf.keras.models.load_model(str(model_path))
             logger.info(f"Model loaded from {model_path}")
-        except:
-            logger.error(f"Failed to load model from {model_path}")
+        except (FileNotFoundError, ImportError, ValueError, OSError) as e:
+            logger.error(f"Failed to load model from {model_path}: {e}")
             raise
 
 
