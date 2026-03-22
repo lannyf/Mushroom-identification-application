@@ -24,10 +24,6 @@ class AggregationMethod(Enum):
     WEIGHTED_AVERAGE = "weighted_average"
     GEOMETRIC_MEAN = "geometric_mean"
     VOTING = "voting"
-    MAXIMUM = "maximum"
-    MINIMUM = "minimum"
-
-
 @dataclass
 class MethodPrediction:
     """Single prediction from one identification method."""
