@@ -13,10 +13,10 @@ class HistoryProvider extends GetxController {
   final Rx<HistoryEntry?> selectedEntry = Rx<HistoryEntry?>(null);
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
     _logger.i('HistoryProvider initialized');
-    await loadHistory();
+    loadHistory();
   }
 
   /// Load all history entries from storage
@@ -134,7 +134,7 @@ class HistoryProvider extends GetxController {
   List<HistoryEntry> searchBySpecies(String query) {
     final lowerQuery = query.toLowerCase();
     return history.where((entry) {
-      final species = entry.topSpecies?.toLowerCase() ?? '';
+      final species = entry.topSpecies.toLowerCase();
       return species.contains(lowerQuery);
     }).toList();
   }
@@ -142,7 +142,7 @@ class HistoryProvider extends GetxController {
   /// Get average confidence from history
   double getAverageConfidence() {
     if (history.isEmpty) return 0.0;
-    final total = history.fold<double>(0.0, (sum, entry) => sum + (entry.confidence ?? 0.0));
+    final total = history.fold<double>(0.0, (sum, entry) => sum + entry.confidence);
     return total / history.length;
   }
 

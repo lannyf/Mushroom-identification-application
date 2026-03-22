@@ -13,7 +13,7 @@ The Mushroom Identification Flutter App is a production-ready cross-platform mob
 ## System Requirements
 
 ### Development Environment
-- **Flutter SDK:** 3.0.0 or higher
+- **Flutter SDK:** 3.10.0 or higher
 - **Dart SDK:** 3.0.0 or higher
 - **Android Studio:** Latest (for Android development)
 - **Xcode:** 14.0+ (for iOS development on macOS)

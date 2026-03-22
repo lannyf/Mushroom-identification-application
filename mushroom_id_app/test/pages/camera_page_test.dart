@@ -39,7 +39,7 @@ void main() {
         home: const CameraPage(),
       ));
 
-      expect(find.text('Capture Mushroom Photo'), findsOneWidget);
+      expect(find.text('Capture Mushroom Image'), findsOneWidget);
       expect(find.byType(AppBar), findsOneWidget);
     });
 
@@ -49,7 +49,7 @@ void main() {
       ));
 
       expect(find.byIcon(Icons.camera_alt), findsOneWidget);
-      expect(find.byIcon(Icons.image_search), findsOneWidget);
+      expect(find.byIcon(Icons.image), findsOneWidget);
     });
 
     testWidgets('Camera page has informational text',

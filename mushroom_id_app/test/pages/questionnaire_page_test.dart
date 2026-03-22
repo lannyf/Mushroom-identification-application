@@ -25,7 +25,7 @@ void main() {
         home: const QuestionnairePage(),
       ));
 
-      expect(find.text('Mushroom Traits'), findsOneWidget);
+      expect(find.text('Mushroom Details'), findsOneWidget);
       expect(find.byType(AppBar), findsOneWidget);
     });
 
@@ -51,14 +51,14 @@ void main() {
       expect(find.byIcon(Icons.arrow_forward), findsWidgets);
     });
 
-    testWidgets('QuestionnairePage displays page count',
+    testWidgets('QuestionnairePage displays page progress',
         (WidgetTester tester) async {
       await tester.pumpWidget(GetMaterialApp(
         home: const QuestionnairePage(),
       ));
 
-      // Should show page 1 of 6
-      expect(find.text('Page 1 of 6'), findsOneWidget);
+      // Should show progress indicator for multi-page form
+      expect(find.byType(LinearProgressIndicator), findsOneWidget);
     });
 
     testWidgets('QuestionnairePage shows questions',

@@ -28,7 +28,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should be on camera page
-      expect(find.text('Capture Mushroom Photo'), findsOneWidget);
+      expect(find.text('Capture Mushroom Image'), findsOneWidget);
     });
 
     testWidgets('Settings page is accessible from home',

@@ -245,7 +245,7 @@ void main() {
           reason: 'Should return cap shape options',
         );
         expect(
-          options.contains('convex'),
+          options.contains('Convex'),
           isTrue,
           reason: 'Should include convex option',
         );
