@@ -308,12 +308,12 @@ class SafetySystem:
         # Check if edible but low confidence
         elif species in self.edible:
             avg_confidence = sum(confidence_breakdown.values()) / len(confidence_breakdown)
-            if avg_confidence < 0.7:
-                warnings.append(f"⚠️  WARNING: Identification confidence is only {avg_confidence:.0%}. "
-                              "Verify with expert before consuming.")
-            elif avg_confidence < 0.5:
+            if avg_confidence < 0.5:
                 warnings.append(f"⚠️  DANGEROUS: Very low confidence ({avg_confidence:.0%}). "
                               "Do NOT consume without expert verification!")
+            elif avg_confidence < 0.7:
+                warnings.append(f"⚠️  WARNING: Identification confidence is only {avg_confidence:.0%}. "
+                              "Verify with expert before consuming.")
         else:
             # Unknown species
             warnings.append("⚠️  WARNING: Unknown species. Please verify with expert mycologist.")
