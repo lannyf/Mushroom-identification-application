@@ -42,20 +42,35 @@ class HistoryEntry {
     );
   }
 
-  String? get topSpecies {
+  String get topSpecies {
     if (results['top_predictions'] is List && (results['top_predictions'] as List).isNotEmpty) {
       final predictions = results['top_predictions'] as List;
       if (predictions.isNotEmpty && predictions[0] is Map) {
-        return (predictions[0] as Map)['species'] as String?;
+        return (predictions[0] as Map)['species'] as String? ?? 'Unknown';
       }
     }
     return 'Unknown';
   }
 
-  double? get confidence {
-    if (results['confidence'] != null) {
-      final conf = results['confidence'];
-      return conf is double ? conf : (conf as int).toDouble();
+  double get confidence {
+    final conf = results['confidence'];
+    if (conf == null) {
+      return 0.0;
+    }
+    if (conf is double) {
+      return conf;
+    }
+    if (conf is int) {
+      return conf.toDouble();
+    }
+    if (conf is num) {
+      return conf.toDouble();
+    }
+    if (conf is String) {
+      final parsed = double.tryParse(conf);
+      if (parsed != null) {
+        return parsed;
+      }
     }
     return 0.0;
   }

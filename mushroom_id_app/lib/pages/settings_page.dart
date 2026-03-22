@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import '../services/storage_service.dart';
 
@@ -608,6 +607,14 @@ class _ApiUrlTileState extends State<_ApiUrlTile> {
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.value);
+  }
+
+  @override
+  void didUpdateWidget(covariant _ApiUrlTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value) {
+      _controller.text = widget.value;
+    }
   }
 
   @override

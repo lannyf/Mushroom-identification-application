@@ -9,59 +9,59 @@ void main() {
       imageService = ImageService();
     });
 
-    group('File validation', () {
-      test('isValidImage returns true for valid file extension', () async {
+    group('Extension validation', () {
+      test('isValidExtension returns true for valid file extension', () {
         // Test JPG
         expect(
-          imageService.isValidImage('photo.jpg'),
+          imageService.isValidExtension('photo.jpg'),
           equals(true),
           reason: 'Should accept .jpg files',
         );
 
         // Test JPEG
         expect(
-          imageService.isValidImage('photo.jpeg'),
+          imageService.isValidExtension('photo.jpeg'),
           equals(true),
           reason: 'Should accept .jpeg files',
         );
 
         // Test PNG
         expect(
-          imageService.isValidImage('photo.png'),
+          imageService.isValidExtension('photo.png'),
           equals(true),
           reason: 'Should accept .png files',
         );
       });
 
-      test('isValidImage returns false for invalid extension', () {
+      test('isValidExtension returns false for invalid extension', () {
         expect(
-          imageService.isValidImage('photo.gif'),
+          imageService.isValidExtension('photo.gif'),
           equals(false),
           reason: 'Should reject .gif files',
         );
 
         expect(
-          imageService.isValidImage('photo.txt'),
+          imageService.isValidExtension('photo.txt'),
           equals(false),
           reason: 'Should reject .txt files',
         );
 
         expect(
-          imageService.isValidImage('no_extension'),
+          imageService.isValidExtension('no_extension'),
           equals(false),
           reason: 'Should reject files without extension',
         );
       });
 
-      test('isValidImage is case insensitive', () {
+      test('isValidExtension is case insensitive', () {
         expect(
-          imageService.isValidImage('photo.JPG'),
+          imageService.isValidExtension('photo.JPG'),
           equals(true),
           reason: 'Should accept uppercase JPG',
         );
 
         expect(
-          imageService.isValidImage('photo.Png'),
+          imageService.isValidExtension('photo.Png'),
           equals(true),
           reason: 'Should accept mixed case PNG',
         );
@@ -69,31 +69,31 @@ void main() {
     });
 
     group('File size formatting', () {
-      test('getFileSizeFormatted handles bytes correctly', () {
+      test('formatFileSize handles bytes correctly', () {
         // 512 bytes
         expect(
-          imageService.getFileSizeFormatted(512),
+          imageService.formatFileSize(512),
           contains('B'),
           reason: 'Should show bytes for small sizes',
         );
 
         // 1 KB = 1024 bytes
         expect(
-          imageService.getFileSizeFormatted(1024),
+          imageService.formatFileSize(1024),
           contains('KB'),
           reason: 'Should show KB for kilobytes',
         );
 
         // 1 MB = 1024 * 1024 bytes
         expect(
-          imageService.getFileSizeFormatted(1024 * 1024),
+          imageService.formatFileSize(1024 * 1024),
           contains('MB'),
           reason: 'Should show MB for megabytes',
         );
       });
 
-      test('getFileSizeFormatted shows decimal places', () {
-        final formatted = imageService.getFileSizeFormatted(1536); // 1.5 KB
+      test('formatFileSize shows decimal places', () {
+        final formatted = imageService.formatFileSize(1536); // 1.5 KB
         expect(
           formatted,
           matches(RegExp(r'\d+\.\d+')),
@@ -105,14 +105,14 @@ void main() {
     group('Configuration constants', () {
       test('maxImageSizeInBytes is 5MB', () {
         expect(
-          imageService.maxImageSizeInBytes,
+          ImageService.maxImageSizeInBytes,
           equals(5 * 1024 * 1024),
           reason: 'Max size should be 5MB',
         );
       });
 
       test('supportedFormats includes jpg, jpeg, png', () {
-        final formats = imageService.supportedFormats;
+        final formats = ImageService.supportedFormats;
         expect(formats.contains('jpg'), isTrue);
         expect(formats.contains('jpeg'), isTrue);
         expect(formats.contains('png'), isTrue);
@@ -120,7 +120,7 @@ void main() {
 
       test('supportedFormats has exactly 3 formats', () {
         expect(
-          imageService.supportedFormats.length,
+          ImageService.supportedFormats.length,
           equals(3),
           reason: 'Should support exactly 3 formats',
         );
@@ -128,22 +128,22 @@ void main() {
     });
 
     group('Error handling', () {
-      test('validateImageWithErrorMessage returns appropriate error for invalid format', () {
-        final result = imageService.validateImageWithErrorMessage('photo.bmp');
+      test('validateExtension returns appropriate error for invalid format', () {
+        final result = imageService.validateExtension('photo.bmp');
         expect(
           result,
           isNotEmpty,
           reason: 'Should return error message for invalid format',
         );
         expect(
-          result,
+          result.toLowerCase(),
           contains('format'),
           reason: 'Error message should mention format',
         );
       });
 
-      test('validateImageWithErrorMessage returns empty for valid format', () {
-        final result = imageService.validateImageWithErrorMessage('photo.jpg');
+      test('validateExtension returns empty for valid format', () {
+        final result = imageService.validateExtension('photo.jpg');
         expect(
           result,
           isEmpty,

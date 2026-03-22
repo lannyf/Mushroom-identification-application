@@ -128,10 +128,9 @@ void main() {
         home: const ResultsPage(),
       ));
 
-      // Should have Save/Share/Retry buttons
-      expect(find.byIcon(Icons.save), findsWidgets);
+      // AppBar has bookmark (save) and share icons; bottom has Share icon
+      expect(find.byIcon(Icons.bookmark), findsWidgets);
       expect(find.byIcon(Icons.share), findsWidgets);
-      expect(find.byIcon(Icons.refresh), findsWidgets);
     });
 
     testWidgets('ResultsPage displays disclaimer',
@@ -144,7 +143,7 @@ void main() {
         find.byWidgetPredicate(
           (widget) =>
               widget is Text &&
-              widget.data?.contains('Not a substitute') == true,
+              widget.data?.contains('Important Safety Notice') == true,
         ),
         findsWidgets,
       );
