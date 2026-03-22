@@ -136,7 +136,15 @@ class TraitEncoder:
         return np.array(features, dtype=np.float32)
     
     def fit_transform(self, df: pd.DataFrame) -> List[str]:
-        """Fit encoder and transform data."""
+        """
+        Fit the encoder on the provided DataFrame and return the learned feature names.
+
+        Args:
+            df: Input DataFrame containing trait columns to be encoded.
+
+        Returns:
+            List of feature names corresponding to the encoded traits.
+        """
         self.fit(df)
         return self.feature_names
     

@@ -24,10 +24,6 @@ class AggregationMethod(Enum):
     WEIGHTED_AVERAGE = "weighted_average"
     GEOMETRIC_MEAN = "geometric_mean"
     VOTING = "voting"
-    MAXIMUM = "maximum"
-    MINIMUM = "minimum"
-
-
 @dataclass
 class MethodPrediction:
     """Single prediction from one identification method."""
@@ -226,7 +222,7 @@ class LookalikeMatcher:
         ('Chanterelle', 'False Chanterelle', 0.8, 'Similar funnel shape and yellow color'),
         ('Chanterelle', "Pig's Ear", 0.7, 'Both funnel-shaped with ridges'),
         ('Black Trumpet', 'Chanterelle', 0.6, 'Both funnel-shaped but different colors'),
-        ('Fly Agaric', 'Amanita virosa', 0.9, 'Both red with spots, very dangerous confusion'),
+        ('Fly Agaric', 'Amanita virosa', 0.9, 'Both deadly Amanita species; confusion by inexperienced foragers can be very dangerous'),
         ('Porcini', 'Other Boletus', 0.8, 'Similar pore structure'),
         ('Slippery Jack', 'Other Boletus', 0.7, 'Slimy cap, pores underneath'),
     ]
@@ -308,12 +304,12 @@ class SafetySystem:
         # Check if edible but low confidence
         elif species in self.edible:
             avg_confidence = sum(confidence_breakdown.values()) / len(confidence_breakdown)
-            if avg_confidence < 0.7:
-                warnings.append(f"⚠️  WARNING: Identification confidence is only {avg_confidence:.0%}. "
-                              "Verify with expert before consuming.")
-            elif avg_confidence < 0.5:
+            if avg_confidence < 0.5:
                 warnings.append(f"⚠️  DANGEROUS: Very low confidence ({avg_confidence:.0%}). "
                               "Do NOT consume without expert verification!")
+            elif avg_confidence < 0.7:
+                warnings.append(f"⚠️  WARNING: Identification confidence is only {avg_confidence:.0%}. "
+                              "Verify with expert before consuming.")
         else:
             # Unknown species
             warnings.append("⚠️  WARNING: Unknown species. Please verify with expert mycologist.")
