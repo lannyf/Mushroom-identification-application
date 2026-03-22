@@ -79,8 +79,8 @@ class ObservationParser:
     
     # Gill-related terms
     GILL_PATTERNS = {
-        'free': ['free', 'not attached', 'attached to stem'],
-        'attached': ['attached', 'adnate', 'sinuate'],
+        'free': ['free', 'not attached'],
+        'attached': ['attached', 'adnate', 'sinuate', 'attached to stem'],
         'decurrent': ['decurrent', 'running down', 'notched'],
         'spacing': {
             'crowded': ['crowded', 'close', 'densely packed'],
