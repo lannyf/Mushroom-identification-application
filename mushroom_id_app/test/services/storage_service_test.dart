@@ -1,12 +1,20 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:mushroom_identification/services/storage_service.dart';
 
 void main() {
+  setUpAll(() {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  });
+
   group('StorageService', () {
     late StorageService storageService;
 
-    setUp(() {
+    setUp(() async {
       storageService = StorageService();
+      // Close and reset database before each test for isolation
+      await storageService.close();
     });
 
     group('Singleton pattern', () {

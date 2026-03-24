@@ -161,7 +161,7 @@ flutter test test/pages/settings_page_test.dart
 Tests complete user journeys across the app.
 
 ```bash
-flutter test integration_test/integration_test.dart
+flutter test test/integration_test.dart
 ```
 
 **Test Scenarios:**

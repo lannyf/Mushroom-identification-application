@@ -110,12 +110,21 @@ class _HistoryPageState extends State<HistoryPage> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              _historyProvider.deleteEntry(entry.id!);
-              Get.back();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Identification deleted')),
-              );
+            onPressed: () async {
+              try {
+                await _historyProvider.deleteEntry(entry.id!);
+                if (!mounted) return;
+                Get.back();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Identification deleted')),
+                );
+              } catch (e) {
+                if (!mounted) return;
+                Get.back();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Failed to delete identification')),
+                );
+              }
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
@@ -137,12 +146,21 @@ class _HistoryPageState extends State<HistoryPage> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              _historyProvider.clearAllHistory();
-              Get.back();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('History cleared')),
-              );
+            onPressed: () async {
+              try {
+                await _historyProvider.clearAllHistory();
+                if (!mounted) return;
+                Get.back();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('History cleared')),
+                );
+              } catch (e) {
+                if (!mounted) return;
+                Get.back();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Failed to clear history')),
+                );
+              }
             },
             child: const Text('Clear', style: TextStyle(color: Colors.red)),
           ),
@@ -166,8 +184,8 @@ class _HistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final confidence = entry.confidence ?? 0.0;
-    final species = entry.topSpecies ?? 'Unknown';
+    final confidence = entry.confidence;
+    final species = entry.topSpecies;
     final safetyRating = entry.safetyRating ?? 'Unknown';
     final dateFormat = DateFormat('MMM d, yyyy • HH:mm');
     final formattedDate = dateFormat.format(entry.createdAt);
@@ -224,20 +242,20 @@ class _HistoryCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: confidence >= 80
+                      color: confidence >= 0.80
                           ? Colors.green[50]
-                          : confidence >= 60
+                          : confidence >= 0.60
                               ? Colors.orange[50]
                               : Colors.red[50],
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      '${confidence.toStringAsFixed(0)}%',
+                      '${(confidence * 100).toStringAsFixed(0)}%',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: confidence >= 80
+                        color: confidence >= 0.80
                             ? Colors.green[700]
-                            : confidence >= 60
+                            : confidence >= 0.60
                                 ? Colors.orange[700]
                                 : Colors.red[700],
                       ),
@@ -254,13 +272,13 @@ class _HistoryCard extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
-                        value: confidence / 100,
+                        value: confidence,
                         minHeight: 6,
                         backgroundColor: Colors.grey[300],
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          confidence >= 80
+                          confidence >= 0.80
                               ? Colors.green
-                              : confidence >= 60
+                              : confidence >= 0.60
                                   ? Colors.orange
                                   : Colors.red,
                         ),
@@ -336,8 +354,8 @@ class HistoryDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final confidence = entry.confidence ?? 0.0;
-    final species = entry.topSpecies ?? 'Unknown';
+    final confidence = entry.confidence;
+    final species = entry.topSpecies;
     final safetyRating = entry.safetyRating ?? 'Unknown';
     final dateFormat = DateFormat('MMMM d, yyyy • HH:mm:ss');
     final formattedDate = dateFormat.format(entry.createdAt);
@@ -388,7 +406,7 @@ class HistoryDetailPage extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${confidence.toStringAsFixed(1)}%',
+                              '${(confidence * 100).toStringAsFixed(1)}%',
                               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -584,8 +602,8 @@ class HistoryDetailPage extends StatelessWidget {
   void _shareIdentification(BuildContext context) {
     final text = '''
 Mushroom Identification Results
-Species: $entry.topSpecies
-Confidence: ${(entry.confidence ?? 0).toStringAsFixed(1)}%
+Species: ${entry.topSpecies}
+Confidence: ${(entry.confidence * 100).toStringAsFixed(1)}%
 Safety: ${entry.safetyRating}
 Date: ${entry.createdAt}
 ''';

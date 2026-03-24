@@ -13,8 +13,8 @@ NC='\033[0m'
 
 # Configuration
 AVD_NAME="mushroom-pixel5"
-APP_DIR="/home/iannyf/projekt/AI-Based-Mushroom-Identification-Using-Image-Recognition-and-Trait-Based-Classification/mushroom_id_app"
-ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$HOME/Android/Sdk}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APP_DIR="${APP_DIR:-"$SCRIPT_DIR/mushroom_id_app"}"
 
 echo -e "${GREEN}╔════════════════════════════════════════════════════════════╗${NC}"
 echo -e "${GREEN}║     Mushroom Identification - Emulator Setup & Runner      ║${NC}"
