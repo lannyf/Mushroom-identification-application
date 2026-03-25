@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'dart:typed_data';
 
 import '../providers/identification_provider.dart';
+import '../services/identification_api_service.dart';
 
 /// Questionnaire page for trait selection.
 /// 
@@ -26,6 +27,7 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
   late IdentificationProvider _provider;
   late TextEditingController _notesController;
   late PageController _pageController;
+  final IdentificationApiService _apiService = IdentificationApiService();
   int _currentPage = 0;
 
   @override
@@ -97,23 +99,52 @@ class _QuestionnairePageState extends State<QuestionnairePage> {
       _provider.setTrait('notes', _notesController.text);
     }
 
-    // Show loading
+    final identificationData = _provider.getIdentificationData();
+    final String? imagePath = identificationData['imagePath'] as String?;
+    final Uint8List? imageBytes = identificationData['imageBytes'] as Uint8List?;
+    final Map<String, dynamic> traits =
+        Map<String, dynamic>.from(identificationData['traits'] as Map);
+
+    if (imagePath == null || imagePath.isEmpty) {
+      Get.snackbar(
+        'Missing Image',
+        'Please upload an image before continuing',
+        backgroundColor: Colors.red[700],
+        colorText: Colors.white,
+      );
+      return;
+    }
+
     _provider.setProcessing(true);
 
-    // TODO: Call API to identify mushroom
-    Get.snackbar(
-      'Success',
-      'Submitting for identification...',
-      backgroundColor: Colors.green[700],
-      colorText: Colors.white,
-    );
-
-    // Simulate API call
-    Future.delayed(const Duration(seconds: 2), () {
-      _provider.setProcessing(false);
-      // Navigate to results page once created
-      Get.toNamed('/results');
-    });
+    _apiService
+        .identifyMushroom(
+          imagePath: imagePath,
+          imageBytes: imageBytes,
+          traits: traits,
+        )
+        .then((results) {
+          _provider.setProcessing(false);
+          Get.toNamed(
+            '/results',
+            arguments: {
+              'demoMode': false,
+              'results': results,
+              'imagePath': imagePath,
+              'traits': traits,
+              'notes': _notesController.text.trim(),
+            },
+          );
+        })
+        .catchError((error) {
+          _provider.setProcessing(false);
+          Get.snackbar(
+            'Identification Failed',
+            error.toString(),
+            backgroundColor: Colors.red[700],
+            colorText: Colors.white,
+          );
+        });
   }
 
   /// Handles trait selection from radio group

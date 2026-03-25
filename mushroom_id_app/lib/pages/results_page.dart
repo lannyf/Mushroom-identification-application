@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../providers/history_provider.dart';
+import '../services/storage_service.dart';
+
 /// Results page displaying mushroom identification results.
 /// 
 /// Shows:
@@ -20,11 +23,28 @@ class ResultsPage extends StatefulWidget {
 class _ResultsPageState extends State<ResultsPage> {
   // Mock data - replace with actual API results
   late Map<String, dynamic> _results;
+  bool _isDemoMode = false;
+  String? _imagePath;
+  Map<String, dynamic> _traits = {};
+  String? _notes;
+  late HistoryProvider _historyProvider;
 
   @override
   void initState() {
     super.initState();
-    _results = {
+    _historyProvider = Get.find<HistoryProvider>();
+    final args = Get.arguments;
+    final providedResults =
+        args is Map<String, dynamic> ? args['results'] as Map<String, dynamic>? : null;
+    _isDemoMode = args is Map<String, dynamic> && args['demoMode'] == true;
+    _imagePath = args is Map<String, dynamic> ? args['imagePath'] as String? : null;
+    _traits = args is Map<String, dynamic> && args['traits'] is Map
+        ? Map<String, dynamic>.from(args['traits'] as Map)
+        : {};
+    _notes = args is Map<String, dynamic> ? args['notes'] as String? : null;
+
+    _results = providedResults ??
+        {
       'top_prediction': 'Boletus edulis',
       'overall_confidence': 0.87,
       'method_confidences': {
@@ -127,6 +147,22 @@ class _ResultsPageState extends State<ResultsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (_isDemoMode) ...[
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withOpacity(0.12),
+                    border: Border.all(color: Colors.orange),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Text(
+                    'Demo results only: this screen is showing hardcoded sample data. '
+                    'It is not yet using the uploaded image for real identification.',
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
               // Overall confidence section
               _buildConfidenceCard(),
               const SizedBox(height: 24),
@@ -643,19 +679,32 @@ class _ResultsPageState extends State<ResultsPage> {
 
   /// Builds action buttons at bottom
   Widget _buildActionButtons() {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: OutlinedButton(
-            onPressed: () => Get.back(),
-            child: const Text('Try Again'),
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () => Get.back(),
+                child: const Text('Try Again'),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: _saveResults,
+                child: const Text('Save Result'),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: ElevatedButton(
-            onPressed: _saveResults,
-            child: const Text('Save Result'),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () => Get.offAllNamed('/'),
+            icon: const Icon(Icons.home),
+            label: const Text('Back to Home'),
           ),
         ),
       ],
@@ -675,12 +724,47 @@ class _ResultsPageState extends State<ResultsPage> {
 
   /// Saves result to history
   void _saveResults() {
-    Get.snackbar(
-      'Saved',
-      'Result saved to history',
-      backgroundColor: Colors.green[700],
-      colorText: Colors.white,
-    );
-    // TODO: Implement save functionality
+    if (_imagePath == null || _imagePath!.isEmpty) {
+      Get.snackbar(
+        'Save Failed',
+        'No image path available for this result',
+        backgroundColor: Colors.red[700],
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    final historyResult = {
+      ..._results,
+      'top_predictions': _results['predictions'] ?? _results['top_predictions'] ?? [],
+      'confidence': _results['overall_confidence'] ?? _results['confidence'] ?? 0.0,
+    };
+
+    _historyProvider
+        .saveIdentification(
+          HistoryEntry(
+            imagePath: _imagePath!,
+            traits: _traits,
+            results: historyResult,
+            createdAt: DateTime.now(),
+            notes: (_notes == null || _notes!.isEmpty) ? null : _notes,
+          ),
+        )
+        .then((_) {
+          Get.snackbar(
+            'Saved',
+            'Result saved to history',
+            backgroundColor: Colors.green[700],
+            colorText: Colors.white,
+          );
+        })
+        .catchError((error) {
+          Get.snackbar(
+            'Save Failed',
+            error.toString(),
+            backgroundColor: Colors.red[700],
+            colorText: Colors.white,
+          );
+        });
   }
 }
