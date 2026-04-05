@@ -219,11 +219,12 @@ def safety_rating(species: str) -> str:
     return "unknown"
 
 
-def common_name_for(species: str) -> str:
+def common_name_for(species: str) -> Tuple[str, str]:
+    """Return (english_name, swedish_name) for a given species key."""
     metadata = SPECIES.get(species)
     if not metadata:
-        return species
-    return metadata.get("scientific_name", species)
+        return species, species
+    return metadata.get("english_name", species), metadata.get("swedish_name", species)
 
 
 def adapt_result(result: Dict[str, Any], image_metrics: Dict[str, float]) -> Dict[str, Any]:
@@ -231,7 +232,8 @@ def adapt_result(result: Dict[str, Any], image_metrics: Dict[str, float]) -> Dic
         {
             "species": item["species"],
             "confidence": item["confidence"],
-            "common": common_name_for(item["species"]),
+            "common": common_name_for(item["species"])[0],
+            "swedish_name": common_name_for(item["species"])[1],
         }
         for item in result["predictions"]
     ]

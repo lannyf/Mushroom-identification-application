@@ -54,6 +54,28 @@ class HistoryEntry {
     return 'Unknown';
   }
 
+  /// English common name of the top prediction (e.g. "Porcini").
+  String get topCommonName {
+    if (results['top_predictions'] is List && (results['top_predictions'] as List).isNotEmpty) {
+      final predictions = results['top_predictions'] as List;
+      if (predictions.isNotEmpty && predictions[0] is Map) {
+        return (predictions[0] as Map)['common'] as String? ?? '';
+      }
+    }
+    return '';
+  }
+
+  /// Swedish name of the top prediction (e.g. "Karljohan").
+  String get topSwedishName {
+    if (results['top_predictions'] is List && (results['top_predictions'] as List).isNotEmpty) {
+      final predictions = results['top_predictions'] as List;
+      if (predictions.isNotEmpty && predictions[0] is Map) {
+        return (predictions[0] as Map)['swedish_name'] as String? ?? '';
+      }
+    }
+    return '';
+  }
+
   double get confidence {
     final conf = results['confidence'];
     if (conf == null) {

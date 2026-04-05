@@ -3,7 +3,7 @@ APP_DIR := $(PROJECT_ROOT)/mushroom_id_app
 FLUTTER_BIN := $(HOME)/Emi/flutter_linux_3.41.5-stable/flutter/bin
 PORT ?= 8080
 
-.PHONY: web-build web-serve web
+.PHONY: web-build web-serve web serv api
 
 web-build:
 	cd $(APP_DIR) && \
@@ -17,3 +17,7 @@ web-serve:
 	python3 -m http.server $(PORT)
 
 web: web-build web-serve
+
+api:
+	cd $(PROJECT_ROOT) && \
+	uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
