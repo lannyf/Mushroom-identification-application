@@ -3,7 +3,7 @@ Step 3 — Trait Database Comparator
 
 Given the species candidate produced by Step 2 (key.xml traversal) this module:
   1. Resolves the Swedish common name to a species record in species.csv.
-  2. Loads the species' morphological trait profile from species_traits.csv.
+  2. Loads the species' morphological trait profile from species_traits.xml.
   3. Compares Step 1 visible_traits against the database profile, producing a
      match score and a breakdown of matching / conflicting traits.
   4. Looks up all lookalike pairs from lookalikes.csv, loads both species'
@@ -38,6 +38,7 @@ from __future__ import annotations
 import csv
 import logging
 import re
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -386,7 +387,7 @@ class TraitDatabaseComparator:
     def __init__(self, data_dir: str) -> None:
         data_path = Path(data_dir)
         self._species = self._load_csv(data_path / "species.csv")
-        self._trait_rows = self._load_csv(data_path / "species_traits.csv")
+        self._trait_rows = self._load_traits_xml(data_path / "species_traits.xml")
         self._lookalike_rows = self._load_csv(data_path / "lookalikes.csv")
         # Index species by species_id for fast lookup
         self._species_by_id: Dict[str, Dict[str, str]] = {
@@ -401,6 +402,26 @@ class TraitDatabaseComparator:
     def _load_csv(path: Path) -> List[Dict[str, str]]:
         with path.open(newline="", encoding="utf-8") as fh:
             return list(csv.DictReader(fh))
+
+    @staticmethod
+    def _load_traits_xml(path: Path) -> List[Dict[str, str]]:
+        """Parse species_traits.xml into the same flat row format as the old CSV."""
+        rows: List[Dict[str, str]] = []
+        tree = ET.parse(path)
+        for species_el in tree.findall("species"):
+            species_id = species_el.get("id", "")
+            for grp_el in species_el.findall("trait_group"):
+                category = grp_el.get("category", "")
+                for trait_el in grp_el.findall("trait"):
+                    rows.append({
+                        "species_id":     species_id,
+                        "trait_category": category,
+                        "trait_name":     trait_el.get("name", ""),
+                        "trait_value":    trait_el.text or "",
+                        "value_type":     trait_el.get("value_type", ""),
+                        "variability":    trait_el.get("variability", ""),
+                    })
+        return rows
 
     # ------------------------------------------------------------------
     def compare(

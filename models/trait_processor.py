@@ -7,12 +7,33 @@ Converts categorical trait data into numerical feature vectors suitable for ML m
 
 import numpy as np
 import pandas as pd
+import xml.etree.ElementTree as ET
 from typing import Dict, List, Tuple, Any, Optional
 import pickle
 import logging
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
+
+
+def _load_traits_xml(path: Path) -> pd.DataFrame:
+    """Parse species_traits.xml into a flat DataFrame matching the original CSV columns."""
+    rows = []
+    tree = ET.parse(path)
+    for species_el in tree.findall("species"):
+        species_id = species_el.get("id", "")
+        for grp_el in species_el.findall("trait_group"):
+            category = grp_el.get("category", "")
+            for trait_el in grp_el.findall("trait"):
+                rows.append({
+                    "species_id":     species_id,
+                    "trait_category": category,
+                    "trait_name":     trait_el.get("name", ""),
+                    "trait_value":    trait_el.text or "",
+                    "value_type":     trait_el.get("value_type", ""),
+                    "variability":    trait_el.get("variability", ""),
+                })
+    return pd.DataFrame(rows)
 
 
 class TraitEncoder:
@@ -172,20 +193,20 @@ class TraitEncoder:
 
 class TraitDataset:
     """
-    Loads and preprocesses trait data from CSV files.
+    Loads and preprocesses trait data from XML files.
     
     Creates feature vectors from species traits for training ML models.
     """
     
-    def __init__(self, traits_csv: str, species_csv: str):
+    def __init__(self, traits_xml: str, species_csv: str):
         """
         Initialize dataset.
         
         Args:
-            traits_csv: Path to species_traits.csv
+            traits_xml: Path to species_traits.xml
             species_csv: Path to species.csv (has species_id and edible flag)
         """
-        self.traits_df = pd.read_csv(traits_csv)
+        self.traits_df = _load_traits_xml(Path(traits_xml))
         self.species_df = pd.read_csv(species_csv)
         self.encoder = TraitEncoder()
         
