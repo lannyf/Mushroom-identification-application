@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import csv
 import json
+import logging
 from pathlib import Path
 from typing import Any, Dict
 
@@ -33,13 +34,16 @@ from api.scoring import (
     adapt_result,
     build_prediction,
     image_scores,
-    llm_scores,
+    ollama_scores,
     trait_scores,
 )
 from models.final_aggregator import FinalAggregator
 from models.hybrid_classifier import AggregationMethod, HybridClassifier
 from models.key_tree_traversal import KeyTreeEngine
+from models.llm_classifier import LLMClassifier, OllamaBackend
 from models.trait_database_comparator import TraitDatabaseComparator
+
+logger = logging.getLogger(__name__)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -72,10 +76,25 @@ KEY_TREE   = KeyTreeEngine(str(KEY_XML))
 COMPARATOR = TraitDatabaseComparator(str(DATA_RAW_DIR))
 AGGREGATOR = FinalAggregator(str(SPECIES_CSV))
 
+# Initialise Ollama LLM classifier — falls back to None if server not running
+if OllamaBackend.is_available():
+    try:
+        LLM = LLMClassifier(backend_type="ollama")
+        logger.info("Ollama LLM classifier ready")
+    except Exception as _e:
+        logger.warning(f"Ollama init failed, using rule-based fallback: {_e}")
+        LLM = None
+else:
+    logger.info("Ollama not reachable — using rule-based LLM fallback (start with: ollama serve)")
+    LLM = None
+
 
 @app.get("/health")
 def health() -> Dict[str, str]:
-    return {"status": "ok"}
+    return {
+        "status": "ok",
+        "llm": "ollama" if LLM is not None else "rule-based",
+    }
 
 
 @app.post("/identify")
@@ -94,7 +113,7 @@ async def identify(
 
     img_scores, metrics, step1 = image_scores(image_bytes)
     trait_based = trait_scores(trait_data)
-    llm_based = llm_scores(metrics, trait_data)
+    llm_based = ollama_scores(LLM, metrics, trait_data, step1)
 
     image_prediction = build_prediction(
         "image",
@@ -106,9 +125,10 @@ async def identify(
         "Scored from questionnaire selections (cap shape, color, gill type, stem type, habitat, season).",
         trait_based,
     )
+    llm_method = "ollama" if LLM is not None else "rule-based"
     llm_prediction = build_prediction(
-        "llm",
-        "Rule-based expert reasoning derived from combined image cues and selected traits.",
+        llm_method,
+        f"LLM reasoning via {llm_method} from combined image cues and selected traits.",
         llm_based,
     )
 

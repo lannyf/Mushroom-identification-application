@@ -332,7 +332,8 @@ class TestExtract:
         result = extract(RED_PNG)
         vt = result["visible_traits"]
         for key in ("dominant_color", "cap_shape", "surface_texture",
-                    "has_ridges", "brightness", "colour_ratios"):
+                    "has_ridges", "brightness", "colour_ratios",
+                    "ml_top_species", "ml_confidence"):
             assert key in vt
 
     def test_confidence_in_0_1(self):
@@ -357,6 +358,13 @@ class TestExtract:
         cr = result["visible_traits"]["colour_ratios"]
         for key in ("red", "orange_yellow", "brown", "white", "dark"):
             assert key in cr
+
+    def test_visible_traits_include_ml_hint(self):
+        result = extract(RED_PNG)
+        vt = result["visible_traits"]
+        ml = result["ml_prediction"]
+        assert vt["ml_top_species"] == ml["top_species"]
+        assert vt["ml_confidence"] == ml["confidence"]
 
     def test_red_image_top_species_not_chanterelle(self):
         """A strongly red image should not rank Chanterelle first."""

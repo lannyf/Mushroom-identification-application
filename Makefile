@@ -17,6 +17,7 @@ VENV_UVICORN  := $(VENV_DIR)/bin/uvicorn
         web-build web-serve web \
         flutter-analyze flutter-test \
         java-build java-run java-test \
+        ollama-setup ollama \
         clean
 
 # ---------------------------------------------------------------------------
@@ -41,6 +42,9 @@ help:
 	@echo "  make java-build       Build Java JAR (requires Maven)"
 	@echo "  make java-run         Run the Java JAR directly"
 	@echo "  make java-test        Run Java tests (requires Maven)"
+	@echo ""
+	@echo "  make ollama-setup     Install Ollama + pull llama3.2:3b model"
+	@echo "  make ollama           Start Ollama server in background"
 	@echo ""
 	@echo "  make clean            Remove build artefacts"
 	@echo "────────────────────────────────────────────────────────────"
@@ -94,6 +98,21 @@ stop:
 	@-lsof -ti :$(JAVA_PORT)   2>/dev/null | xargs -r kill -9 || true
 	@-lsof -ti :$(WEB_PORT)    2>/dev/null | xargs -r kill -9 || true
 	@echo "Backends stopped."
+
+# ---------------------------------------------------------------------------
+# Ollama local LLM
+# ---------------------------------------------------------------------------
+ollama-setup:
+	@echo "Installing Ollama…"
+	curl -fsSL https://ollama.com/install.sh | sh
+	@echo "Pulling llama3.2:3b model (approx 2 GB)…"
+	ollama pull llama3.2:3b
+	@echo "Ollama setup complete. Run 'make ollama' to start the server."
+
+ollama:
+	@echo "Starting Ollama server on port 11434…"
+	ollama serve &
+	@echo "Ollama running. Restart the Python API ('make stop && make start') to activate LLM."
 
 # ---------------------------------------------------------------------------
 # Flutter web

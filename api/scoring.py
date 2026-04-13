@@ -209,6 +209,67 @@ def llm_scores(
     return scores
 
 
+def build_observation_text(
+    metrics: Dict[str, float],
+    traits: Dict[str, Any],
+    step1: Dict[str, Any],
+) -> str:
+    """Build a natural-language mushroom description for the LLM from extracted data."""
+    vt = step1.get("visible_traits", {})
+    dominant   = vt.get("dominant_color", traits.get("color", "unknown"))
+    cap_shape  = vt.get("cap_shape",  traits.get("cap_shape",  "unknown"))
+    texture    = vt.get("surface_texture", "unknown")
+    has_ridges = vt.get("has_ridges", False)
+    gill_type  = traits.get("gill_type", "unknown")
+    stem_type  = traits.get("stem_type", "unknown")
+    habitat    = traits.get("habitat",   "forest")
+    season     = traits.get("season",    "autumn")
+
+    lines = [
+        f"Cap colour: {dominant}.",
+        f"Cap shape: {cap_shape}, surface texture: {texture}.",
+        f"Gill/underside structure: {'ridges (false gills)' if has_ridges else gill_type}.",
+        f"Stem type: {stem_type}.",
+        f"Habitat: {habitat}, season: {season}.",
+        f"Colour analysis — red: {metrics.get('red_ratio', 0):.2f}, "
+        f"orange-red: {metrics.get('orange_red_ratio', 0):.2f}, "
+        f"orange-yellow: {metrics.get('orange_yellow_ratio', 0):.2f}, "
+        f"brown: {metrics.get('brown_ratio', 0):.2f}, "
+        f"white: {metrics.get('white_ratio', 0):.2f}.",
+    ]
+    return " ".join(lines)
+
+
+def ollama_scores(
+    classifier: Any,
+    metrics: Dict[str, float],
+    traits: Dict[str, Any],
+    step1: Dict[str, Any],
+) -> Dict[str, float]:
+    """
+    Query the Ollama LLM and convert the result to a per-species score dict.
+    Falls back to rule-based llm_scores() if Ollama is unavailable or errors.
+    """
+    if classifier is None:
+        return llm_scores(metrics, traits)
+
+    try:
+        observation = build_observation_text(metrics, traits, step1)
+        result = classifier.classify(observation)
+        # Convert (species, confidence, reason) tuples to scores dict
+        scores: Dict[str, float] = {name: 0.01 for name in TARGET_SPECIES}
+        for species, confidence, _ in result.predictions:
+            if species in scores:
+                scores[species] = float(confidence)
+        # If top prediction is a target species, boost it directly
+        if result.top_species in scores:
+            scores[result.top_species] = max(scores[result.top_species], result.top_confidence)
+        return scores
+    except Exception:
+        # Graceful fallback — Ollama may be slow, offline, or model not pulled yet
+        return llm_scores(metrics, traits)
+
+
 # ---------------------------------------------------------------------------
 # Result helpers
 # ---------------------------------------------------------------------------

@@ -52,6 +52,7 @@ class _TreeTraversalPageState extends State<TreeTraversalPage> {
       Get.toNamed('/results', arguments: {
         'results': _provider.step4Result.value,
         'imagePath': _provider.selectedImagePath.value,
+        'step2Result': _provider.step2Result.value,
       });
     }
   }
@@ -139,6 +140,11 @@ class _TreeTraversalPageState extends State<TreeTraversalPage> {
 
   Widget _buildConcluding(BuildContext context, bool isSwedish) {
     final species = _provider.step2Result.value?['species'] ?? '';
+    final step2 = _provider.step2Result.value;
+    final skippedTree =
+        step2?['tree_compatibility'] is Map &&
+        (step2!['tree_compatibility']['tree_policy'] == 'skip_tree');
+    final skipMessage = step2?['message'] as String?;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -159,6 +165,34 @@ class _TreeTraversalPageState extends State<TreeTraversalPage> {
               isSwedish ? 'Kontrollerar mot artdatabasen' : 'Verifying against species database',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
             ),
+            if (skippedTree) ...[
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.12),
+                  border: Border.all(color: Colors.orange),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  isSwedish
+                      ? 'Artträdet kunde inte användas för den här svampen. '
+                        'Identifieringen fortsätter med bildmodellen och artdatabasen.'
+                      : 'Species tree traversal was not possible for this mushroom. '
+                        'Identification continues using the image model and species database.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              if (skipMessage != null && skipMessage.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  skipMessage,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[700]),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ],
           ],
         ),
       ),

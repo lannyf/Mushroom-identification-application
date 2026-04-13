@@ -29,6 +29,7 @@ class _ResultsPageState extends State<ResultsPage> {
   String? _imagePath;
   Map<String, dynamic> _traits = {};
   String? _notes;
+  Map<String, dynamic>? _step2Result;
   late HistoryProvider _historyProvider;
 
   @override
@@ -40,6 +41,9 @@ class _ResultsPageState extends State<ResultsPage> {
         args is Map<String, dynamic> ? args['results'] as Map<String, dynamic>? : null;
     _isDemoMode = args is Map<String, dynamic> && args['demoMode'] == true;
     _imagePath = args is Map<String, dynamic> ? args['imagePath'] as String? : null;
+    _step2Result = args is Map<String, dynamic> && args['step2Result'] is Map
+        ? Map<String, dynamic>.from(args['step2Result'] as Map)
+        : null;
     _traits = args is Map<String, dynamic> && args['traits'] is Map
         ? Map<String, dynamic>.from(args['traits'] as Map)
         : {};
@@ -138,6 +142,12 @@ class _ResultsPageState extends State<ResultsPage> {
     'english_name':     'Porcini',
   };
 
+  bool get _treeTraversalSkipped =>
+      _step2Result?['tree_compatibility'] is Map &&
+      (_step2Result!['tree_compatibility']['tree_policy'] == 'skip_tree');
+
+  String? get _treeTraversalMessage => _step2Result?['message'] as String?;
+
   /// Gets color based on confidence level
   Color _getConfidenceColor(double confidence) {
     if (confidence >= 0.8) return Colors.green;
@@ -216,6 +226,34 @@ class _ResultsPageState extends State<ResultsPage> {
                 ),
                 const SizedBox(height: 16),
               ],
+              if (_treeTraversalSkipped) ...[
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withOpacity(0.12),
+                    border: Border.all(color: Colors.orange),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Species tree traversal was not possible for this mushroom.',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _treeTraversalMessage ??
+                            'This species is not represented as an exact decision in the tree, so the result below relies on the image model and species database instead.',
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
               // Overall confidence section
               Obx(() => _buildConfidenceCard()),
               const SizedBox(height: 24),
@@ -233,7 +271,7 @@ class _ResultsPageState extends State<ResultsPage> {
               const SizedBox(height: 24),
 
               // Top predictions (ML alternatives from Step 4)
-              Obx(() => _buildPredictionsSection()),
+              _buildPredictionsSection(),
               const SizedBox(height: 24),
 
               // Lookalike warnings

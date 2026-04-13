@@ -113,6 +113,7 @@ Expected output: 40+ tests passing with 85%+ coverage
 - **DEPLOYMENT.md** - Build and release procedures
 - **TESTING-GUIDE.md** - Comprehensive test documentation
 - **implementationplan.md** - Detailed project implementation roadmap
+- **PROJECT-FILE-INVENTORY.md** - Repository file and folder reference
 
 ---
 
