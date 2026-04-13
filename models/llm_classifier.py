@@ -561,16 +561,64 @@ class OpenAIBackend(LLMBackend):
             raise
 
 
+class OllamaBackend(LLMBackend):
+    """Ollama local LLM backend — no API key required."""
+
+    DEFAULT_MODEL = "llama3.2:3b"
+    BASE_URL      = "http://localhost:11434"
+
+    def __init__(self, model: Optional[str] = None, base_url: Optional[str] = None):
+        import requests as _requests
+        self._requests = _requests
+        self.model    = model    or os.environ.get("OLLAMA_MODEL",    self.DEFAULT_MODEL)
+        self.base_url = base_url or os.environ.get("OLLAMA_BASE_URL", self.BASE_URL)
+
+    @classmethod
+    def is_available(cls) -> bool:
+        """Return True if the Ollama server is reachable."""
+        try:
+            import requests as _r
+            resp = _r.get(f"{cls.BASE_URL}/api/tags", timeout=2)
+            return resp.status_code == 200
+        except Exception:
+            return False
+
+    def query(self, system_prompt: str, user_observation: str) -> str:
+        """Send observation to Ollama and return the model's raw response string."""
+        payload = {
+            "model": self.model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user",   "content": user_observation},
+            ],
+            "stream": False,
+            "format": "json",   # ask Ollama to enforce JSON output
+        }
+        try:
+            resp = self._requests.post(
+                f"{self.base_url}/api/chat",
+                json=payload,
+                timeout=60,
+            )
+            resp.raise_for_status()
+            return resp.json()["message"]["content"]
+        except Exception as e:
+            logger.error(f"Ollama query error: {e}")
+            raise
+
+
 class LLMClassifier:
     """Main LLM classifier integrating prompts, backends, and response parsing."""
     
-    def __init__(self, backend_type: str = 'mock', api_key: Optional[str] = None):
+    def __init__(self, backend_type: str = 'mock', api_key: Optional[str] = None,
+                 ollama_model: Optional[str] = None):
         """
         Initialize classifier with specified backend.
-        
+
         Args:
-            backend_type: 'mock', 'openai', or 'huggingface'
-            api_key: API key for OpenAI (if using openai backend)
+            backend_type: 'mock', 'openai', or 'ollama'
+            api_key: API key for OpenAI backend
+            ollama_model: Ollama model name (default: llama3.2:3b)
         """
         self.species_db = SpeciesDatabase()
         self.prompt_template = LLMPromptTemplate(self.species_db)
@@ -580,6 +628,8 @@ class LLMClassifier:
             self.backend = MockLLMBackend()
         elif backend_type == 'openai':
             self.backend = OpenAIBackend(api_key)
+        elif backend_type == 'ollama':
+            self.backend = OllamaBackend(model=ollama_model)
         else:
             raise ValueError(f'Unknown backend type: {backend_type}')
         

@@ -53,6 +53,95 @@ _EDIBILITY: Dict[str, str] = {
     "?":   "unknown",
 }
 
+_PRECHECK_SKIP_THRESHOLD = 0.85
+
+_TREE_EXACT_MATCHES: Dict[str, Dict[str, str]] = {
+    "Chanterelle": {"tree_species": "Kantarell", "swedish_name": "Kantarell"},
+    "Black Trumpet": {"tree_species": "Svart trumpetsvamp", "swedish_name": "Svart trumpetsvamp"},
+    "Porcini": {"tree_species": "Stensopp (karljohanssvamp)", "swedish_name": "Karljohan"},
+    "Other Boletus": {"tree_species": "Brunsopp", "swedish_name": "Brunsopp"},
+}
+
+_TREE_LOOKALIKE_ONLY: Dict[str, Dict[str, str]] = {
+    "Amanita virosa": {
+        "swedish_name": "Änglsvamp",
+        "tree_alias": "Vit flugsvamp",
+        "edibility": "++",
+        "edibility_label": "POISONOUS / deadly",
+        "reason": "Species appears only as a toxic lookalike in key.xml, not as a traversable decision.",
+    },
+    "False Chanterelle": {
+        "swedish_name": "Falsk kantarell",
+        "tree_alias": "Narrkantarell (falsk kantarell)",
+        "edibility": "+",
+        "edibility_label": "inedible / eat with caution",
+        "reason": "Species appears only as a lookalike under Kantarell, not as a traversable decision.",
+    },
+}
+
+_TREE_UNSUPPORTED: Dict[str, Dict[str, str]] = {
+    "Fly Agaric": {
+        "swedish_name": "Flugsvamp",
+        "edibility": "+",
+        "edibility_label": "inedible / eat with caution",
+        "reason": "Species is not present in key.xml.",
+    },
+}
+
+
+def _tree_compatibility(visible_traits: Dict[str, Any]) -> Dict[str, Any]:
+    ml_species = str(visible_traits.get("ml_top_species", "")).strip()
+    ml_confidence = float(visible_traits.get("ml_confidence", 0.0) or 0.0)
+
+    compatibility: Dict[str, Any] = {
+        "ml_top_species": ml_species,
+        "ml_confidence": ml_confidence,
+        "tree_support": "unknown",
+        "tree_policy": "full_traversal",
+        "tree_species": None,
+        "swedish_name": None,
+        "reason": "",
+    }
+
+    if ml_species in _TREE_EXACT_MATCHES:
+        info = _TREE_EXACT_MATCHES[ml_species]
+        compatibility.update({
+            "tree_support": "exact_decision",
+            "tree_policy": "full_traversal",
+            "tree_species": info["tree_species"],
+            "swedish_name": info["swedish_name"],
+            "reason": "Species has an exact traversable decision in key.xml.",
+        })
+        return compatibility
+
+    if ml_species in _TREE_LOOKALIKE_ONLY:
+        info = _TREE_LOOKALIKE_ONLY[ml_species]
+        compatibility.update({
+            "tree_support": "lookalike_only",
+            "tree_policy": "skip_tree" if ml_confidence >= _PRECHECK_SKIP_THRESHOLD else "branch_only",
+            "tree_species": info.get("tree_alias"),
+            "swedish_name": info["swedish_name"],
+            "edibility": info["edibility"],
+            "edibility_label": info["edibility_label"],
+            "reason": info["reason"],
+        })
+        return compatibility
+
+    if ml_species in _TREE_UNSUPPORTED:
+        info = _TREE_UNSUPPORTED[ml_species]
+        compatibility.update({
+            "tree_support": "unsupported",
+            "tree_policy": "skip_tree" if ml_confidence >= _PRECHECK_SKIP_THRESHOLD else "branch_only",
+            "tree_species": None,
+            "swedish_name": info["swedish_name"],
+            "edibility": info["edibility"],
+            "edibility_label": info["edibility_label"],
+            "reason": info["reason"],
+        })
+        return compatibility
+
+    return compatibility
+
 
 # ---------------------------------------------------------------------------
 # Tree node types
@@ -153,19 +242,81 @@ def _try_auto_answer(question: str, options: List[str],
     cr    = traits.get("colour_ratios", {})
     dark  = cr.get("dark", 0)
     oy    = cr.get("orange_yellow", 0)
+    brown = cr.get("brown", 0)
+    red   = cr.get("red", 0)
+    white = cr.get("white", 0)
+    ml_species = str(traits.get("ml_top_species", ""))
+    ml_conf = float(traits.get("ml_confidence", 0.0) or 0.0)
+
+    if ml_conf >= 0.75:
+        ml_question_hints = {
+            "Hur ser svampen ut?": {
+                "Fly Agaric": "Undersidan har skivor",
+                "Amanita virosa": "Undersidan har skivor",
+                "False Chanterelle": "Undersidan har skivor",
+                "Chanterelle": "Undersidan har åsar eller ådror",
+                "Black Trumpet": "Undersidan har åsar eller ådror",
+                "Porcini": "Undersidan har rör",
+                "Other Boletus": "Undersidan har rör",
+            },
+            "Vilken färg har svampen?": {
+                "Chanterelle": "Hela svampen är gul",
+                "Black Trumpet": "Hela svampen är svart eller mörkgrå",
+            },
+            "Hur ser rören ut?": {
+                "Porcini": "Rören kan lätt lossas från hatten hos utväxta exemplar",
+                "Other Boletus": "Rören kan lätt lossas från hatten hos utväxta exemplar",
+            },
+            "Har den ring?": {
+                "Porcini": "Den har ingen ring",
+                "Other Boletus": "Den har ingen ring",
+            },
+            "Vad stämmer bäst angående utseende?": {
+                "Porcini": "Kraftig fot med vitt ådernät",
+                "Other Boletus": "Brun hatt och fot",
+            },
+        }
+        hinted = ml_question_hints.get(question, {}).get(ml_species)
+        if hinted in options:
+            return hinted
 
     # ------------------------------------------------------------------ #
     #  Q: "Hur ser svampen ut?" (underside / overall structure)           #
     # ------------------------------------------------------------------ #
     if "hur ser svampen ut" in question.lower():
-        if has_r:
-            target = "Undersidan har åsar eller ådror"
-            if target in options:
-                return target
-        if dom in {"brown", "olive-brown", "tan"} and shape in {"convex", "flat"}:
-            target = "Undersidan har rör"
-            if target in options:
-                return target
+        ridge_target = "Undersidan har åsar eller ådror"
+        pore_target = "Undersidan har rör"
+
+        # The raw ridge detector is intentionally noisy on full-scene photos.
+        # Only auto-answer when the visual profile is clearly bolete-like or
+        # chanterelle/trumpet-like; otherwise let the caller ask the user.
+        if pore_target in options:
+            bolete_like = (
+                dom in {"brown", "olive-brown", "tan"}
+                and sec in {"yellow", "yellow-green", "olive-brown", "orange-yellow"}
+                and brown >= 0.09
+                and red < 0.25
+                and white < 0.15
+            )
+            bolete_photo_variant = (
+                dom in {"orange", "red"}
+                and brown >= 0.25
+                and sec in {"orange", "red", "yellow-green", "orange-yellow"}
+                and white < 0.08
+            )
+            if bolete_like or bolete_photo_variant:
+                return pore_target
+
+        if ridge_target in options and has_r:
+            chanterelle_like = (
+                (dom in {"yellow", "orange", "orange-yellow"} and oy >= brown)
+                or (sec in {"yellow", "orange", "orange-yellow"} and oy >= 0.16 and dark < 0.18)
+                or (dom in {"black", "grey"} and dark >= 0.15)
+                or (sec in {"black", "grey"} and dark >= 0.15 and brown < 0.15)
+            )
+            if chanterelle_like:
+                return ridge_target
+
         return None  # ask user for this critical question
 
     # ------------------------------------------------------------------ #
@@ -247,6 +398,7 @@ class TraversalSession:
     session_id: str
     current: QuestionNode              # the question currently being asked
     visible_traits: Dict[str, Any]     # Step 1 output
+    tree_compatibility: Dict[str, Any]
     path: List[str] = field(default_factory=list)       # answers chosen so far
     auto_answered: List[Dict] = field(default_factory=list)  # auto-resolved Q→A
 
@@ -281,10 +433,36 @@ class KeyTreeEngine:
         if the tree can be traversed entirely from the image data).
         """
         sid = session_id or str(uuid.uuid4())
+        compatibility = _tree_compatibility(visible_traits)
+        if compatibility["tree_policy"] == "skip_tree":
+            logger.debug(
+                "Skipping tree traversal for %s (%.3f): %s",
+                compatibility["ml_top_species"],
+                compatibility["ml_confidence"],
+                compatibility["reason"],
+            )
+            return {
+                "status": "conclusion",
+                "session_id": sid,
+                "species": compatibility["swedish_name"],
+                "edibility": compatibility["edibility"],
+                "edibility_label": compatibility["edibility_label"],
+                "url": "",
+                "lookalikes": [],
+                "path": [],
+                "auto_answered": [],
+                "tree_compatibility": compatibility,
+                "source": "ml_precheck",
+                "message": (
+                    f"Skipped species tree traversal because "
+                    f"'{compatibility['ml_top_species']}' cannot be confirmed exactly by key.xml."
+                ),
+            }
         session = TraversalSession(
             session_id=sid,
             current=self.root,
             visible_traits=visible_traits,
+            tree_compatibility=compatibility,
         )
         self._sessions[sid] = session
         logger.debug("New session %s", sid)
@@ -334,6 +512,7 @@ class KeyTreeEngine:
             "options":      options,
             "path":         list(session.path),
             "auto_answered": list(session.auto_answered),
+            "tree_compatibility": session.tree_compatibility,
         }
 
     # ------------------------------------------------------------------
@@ -382,6 +561,7 @@ class KeyTreeEngine:
                 ],
                 "path":         list(session.path),
                 "auto_answered": list(session.auto_answered),
+                "tree_compatibility": session.tree_compatibility,
             }
 
         if sub_conditions and matched.sub_question:
@@ -418,4 +598,5 @@ class KeyTreeEngine:
             "options":      [c.answer for c in session.current.conditions],
             "path":         list(session.path),
             "auto_answered": list(session.auto_answered),
+            "tree_compatibility": session.tree_compatibility,
         }

@@ -116,6 +116,13 @@ def analyse_colours(bgr: np.ndarray) -> Dict[str, Any]:
     white_ratio        = float(np.mean((r > 185) & (g > 185) & (b > 185)))
     dark_ratio         = float(np.mean((r < 60)  & (g < 60)  & (b < 60)))
 
+    # Full-scene photos can let forest background dominate KMeans even when the
+    # subject is a classic red Fly Agaric cap. Preserve that foreground cue in
+    # the structured traits so Step 2 does not branch on irrelevant colours.
+    if red_ratio >= 0.09 and white_ratio >= 0.05 and red_ratio > orange_yellow_ratio:
+        dominant = "red"
+        secondary = "white"
+
     return {
         "dominant_color":        dominant,
         "secondary_color":       secondary,
@@ -126,6 +133,24 @@ def analyse_colours(bgr: np.ndarray) -> Dict[str, Any]:
         "white_ratio":           round(white_ratio, 3),
         "dark_ratio":            round(dark_ratio, 3),
     }
+
+
+def _looks_like_fly_agaric_signature(colour: Dict[str, Any], shape: Dict[str, Any]) -> bool:
+    red = float(colour["red_ratio"])
+    orange_red = float(colour.get("orange_red_ratio", 0.0))
+    orange_yellow = float(colour["orange_yellow_ratio"])
+    white = float(colour["white_ratio"])
+    shape_name = str(shape.get("cap_shape", "")).lower()
+
+    spotted_red_cap = red >= 0.09 and white >= 0.05 and red > orange_yellow
+    warm_red_cap = (
+        red >= 0.08
+        and orange_red >= 0.03
+        and shape_name in {"convex", "flat", "bell-shaped"}
+    )
+    pale_spotted_cap = white >= 0.10 and red >= 0.07
+
+    return spotted_red_cap or warm_red_cap or pale_spotted_cap
 
 
 # ---------------------------------------------------------------------------
@@ -370,13 +395,14 @@ def extract(image_bytes: bytes) -> Dict[str, Any]:
     shape      = analyse_shape(bgr)
     texture    = analyse_texture(bgr)
     brightness = analyse_brightness(bgr)
+    fly_agaric_like = _looks_like_fly_agaric_signature(colour, shape)
 
     visible_traits: Dict[str, Any] = {
         "dominant_color":  colour["dominant_color"],
         "secondary_color": colour["secondary_color"],
         "cap_shape":       shape["cap_shape"],
         "surface_texture": texture["surface_texture"],
-        "has_ridges":      texture["has_ridges"],
+        "has_ridges":      texture["has_ridges"] and not fly_agaric_like,
         "brightness":      brightness,
         "colour_ratios": {
             "red":           colour["red_ratio"],
@@ -438,6 +464,8 @@ def extract(image_bytes: bytes) -> Dict[str, Any]:
         ],
         "reasoning": reasoning,
     }
+    visible_traits["ml_top_species"] = top_species
+    visible_traits["ml_confidence"] = round(top_conf, 4)
 
     logger.debug("Step-1 result: %s (%.4f) via %s", top_species, top_conf, method)
     return {"ml_prediction": ml_prediction, "visible_traits": visible_traits}
