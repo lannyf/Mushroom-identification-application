@@ -1,2 +1,27 @@
 scripts/__pycache__/
 flutter/
+
+# Python build/cache artifacts
+__pycache__/
+*.py[cod]
+
+# External SDK/source clones
+sam2/
+
+# Model checkpoints and generated evaluation artifacts
+artifacts/*.pt
+artifacts/prediction_samples/
+artifacts/sam2_pilot/
+artifacts/segmentation_evaluation.json
+
+# Generated segmentation datasets and masks
+data/SegMaskSAM2/
+data/SegMaskSAM2_eval_holdout/
+data/SegMaskSAM2_eval_secondary/
+data/segmentation/
+data/segmentation.zip
+data/Mushroom segmentation.coco-segmentation/
+
+# Large raw evaluation/background image folders
+data/raw/background/
+data/raw/evaluation_images/

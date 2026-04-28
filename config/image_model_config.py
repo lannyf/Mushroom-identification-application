@@ -53,6 +53,7 @@ SPECIES: List[str] = [
     "Black Trumpet",
 ]
 
+# Number of output classes — derived from the species list for consistency
 NUM_CLASSES: int = len(SPECIES)
 
 # ============================================================================

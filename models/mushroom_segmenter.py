@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import io
 import threading
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import cv2
@@ -157,6 +158,29 @@ class Segmenter:
             "boundary_irregularity": float(boundary_irregularity),
         }
 
+    def _center_distance(self, bbox: Tuple[int, ...], W: int, H: int) -> float:
+        """Normalized distance from bbox centroid to image center."""
+        x, y, bw, bh = bbox
+        cx = x + bw / 2.0
+        cy = y + bh / 2.0
+        return max(abs(cx - W / 2.0) / W, abs(cy - H / 2.0) / H)
+
+    def _skin_ratio(self, bgr: np.ndarray, mask: np.ndarray) -> float:
+        """Fraction of masked pixels in HSV skin-tone range."""
+        hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
+        # Skin-tone range (H: 0-50, S: 20-170, V: 50-255)
+        lower = np.array([0, 20, 50], dtype=np.uint8)
+        upper = np.array([50, 170, 255], dtype=np.uint8)
+        skin = cv2.inRange(hsv, lower, upper)
+        masked_skin = np.count_nonzero((mask > 0) & (skin > 0))
+        mask_pixels = np.count_nonzero(mask > 0)
+        return masked_skin / mask_pixels if mask_pixels > 0 else 0.0
+
+    def _aspect_ratio(self, bbox: Tuple[int, ...]) -> float:
+        x, y, w, h = bbox
+        h = max(1, h)
+        return w / h
+
     def segment(self, image_bytes: bytes, top_n: int = 5) -> Dict[str, Any]:
         bgr = self._pil_to_bgr(image_bytes)
         H, W = bgr.shape[:2]
@@ -178,33 +202,68 @@ class Segmenter:
             inst["cleaned_mask"] = cleaned
             inst.update(self._quality_metrics(cleaned))
 
-        # sort by confidence then area
-        instances = sorted(instances, key=lambda x: (x.get("model_confidence", 0.0), x.get("area_ratio", 0.0)), reverse=True)
+            # Post-processing heuristics
+            bbox = inst["bbox"]
+            inst["center_distance"] = self._center_distance(bbox, W, H)
+            inst["skin_ratio"] = self._skin_ratio(bgr, cleaned)
+            inst["aspect_ratio"] = self._aspect_ratio(bbox)
+
+        # Filter + rank
+        filtered: List[Dict[str, Any]] = []
+        for inst in instances:
+            # Aspect ratio guard
+            ar = inst.get("aspect_ratio", 1.0)
+            if ar > 4.0 or ar < 0.25:
+                continue
+            # Skin-colour rejection (>30% skin pixels)
+            if inst.get("skin_ratio", 0.0) > 0.30:
+                continue
+            filtered.append(inst)
+
+        if not filtered:
+            filtered = instances  # fallback: keep all if everything filtered
+
+        # Sort: confidence desc, then center-distance asc (center bias)
+        filtered.sort(
+            key=lambda x: (x.get("model_confidence", 0.0), -x.get("center_distance", 1.0)),
+            reverse=True,
+        )
 
         # limit to top_n
-        instances = instances[:top_n]
+        filtered = filtered[:top_n]
 
-        # selection: deterministic rules collectivized here but caller may re-rank
-        selected_index = None
-        for idx, inst in enumerate(instances):
-            if inst.get("model_confidence", 0.0) < 0.0:
-                continue
-            selected_index = 0 if idx == 0 else selected_index
-        # default selection if any
-        if instances and selected_index is None:
-            selected_index = 0
+        # selection: highest-ranked after filtering
+        selected_index = 0 if filtered else None
 
         return {
-            "instances": instances,
+            "instances": filtered,
             "selected_index": selected_index,
         }
 
 
-def get_segmenter(model_path: str = "artifacts/yolov8_seg.pt") -> Segmenter:
+def _resolve_model_path(
+    preferred: str = "artifacts/yolov8_seg_ft.pt",
+    fallback: str = "artifacts/yolov8n-seg.pt",
+) -> str:
+    """Return preferred path if it exists, otherwise fallback."""
+    if Path(preferred).exists():
+        return preferred
+    if Path(fallback).exists():
+        return fallback
+    # Let Ultralytics handle download if neither exists
+    return preferred if preferred else fallback
+
+
+def get_segmenter(
+    model_path: Optional[str] = None,
+    preferred_path: str = "artifacts/yolov8_seg_ft.pt",
+    fallback_path: str = "artifacts/yolov8n-seg.pt",
+) -> Segmenter:
     global _segmenter_instance
     if _segmenter_instance is not None:
         return _segmenter_instance
     with _segmenter_lock:
         if _segmenter_instance is None:
-            _segmenter_instance = Segmenter(model_path)
+            resolved = model_path if model_path else _resolve_model_path(preferred_path, fallback_path)
+            _segmenter_instance = Segmenter(resolved)
     return _segmenter_instance
