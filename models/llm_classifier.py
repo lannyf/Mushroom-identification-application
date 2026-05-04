@@ -54,312 +54,27 @@ class PredictionResult:
 
 
 class SpeciesDatabase:
-    """In-memory database of mushroom species with bilingual names."""
-    
+    """In-memory database of mushroom species loaded from species.csv."""
+
     def __init__(self):
-        """Initialize with 20 mushroom species from Nya Svampboken."""
-        self.species = {
-            'CA.CI': {
-                'swedish': 'Kantarell',
-                'english': 'Chanterelle',
-                'scientific': 'Cantharellus cibarius',
-                'edible': True,
-                'toxicity': 'SAFE',
-                'traits': {
-                    'cap': 'funnel-shaped, yellow-orange',
-                    'gills': 'ridges, pale yellow, decurrent',
-                    'stem': 'solid, cylindrical',
-                    'flesh': 'pale yellow, firm',
-                    'habitat': 'forest floor, mixed trees',
-                    'season': 'summer to autumn'
-                }
-            },
-            'CR.CO': {
-                'swedish': 'Svart Trumpetsvamp',
-                'english': 'Black Trumpet',
-                'scientific': 'Craterellus cinereus',
-                'edible': True,
-                'toxicity': 'SAFE',
-                'traits': {
-                    'cap': 'funnel-shaped, dark gray to black',
-                    'gills': 'ridges, whitish',
-                    'stem': 'hollow, dark',
-                    'flesh': 'thin, gray',
-                    'habitat': 'forest floor',
-                    'season': 'summer to autumn'
-                }
-            },
-            'BO.ED': {
-                'swedish': 'Karljohan',
-                'english': 'Porcini',
-                'scientific': 'Boletus edulis',
-                'edible': True,
-                'toxicity': 'SAFE',
-                'traits': {
-                    'cap': 'convex, brown',
-                    'gills': 'pores instead of gills, pale yellow',
-                    'stem': 'bulbous, pale with network pattern',
-                    'flesh': 'white, firm',
-                    'habitat': 'forest floor under pine/spruce',
-                    'season': 'summer to autumn'
-                }
-            },
-            'AM.MU': {
-                'swedish': 'Flugsvamp',
-                'english': 'Fly Agaric',
-                'scientific': 'Amanita muscaria',
-                'edible': False,
-                'toxicity': 'TOXIC',
-                'traits': {
-                    'cap': 'convex, bright red with white spots',
-                    'gills': 'free, white',
-                    'stem': 'white with ring and volva',
-                    'flesh': 'white, soft',
-                    'habitat': 'birch and pine forests',
-                    'season': 'autumn'
-                }
-            },
-            'AM.VI': {
-                'swedish': 'Vit Flugsvamp',
-                'english': 'Destroying Angel',
-                'scientific': 'Amanita virosa',
-                'edible': False,
-                'toxicity': 'DEADLY',
-                'traits': {
-                    'cap': 'white to cream, hemispherical',
-                    'gills': 'free, white',
-                    'stem': 'white with ring and bulbous volva',
-                    'flesh': 'white, thin',
-                    'habitat': 'mixed forests',
-                    'season': 'autumn'
-                }
-            },
-            'PS001': {
-                'swedish': 'Björkskivling',
-                'english': 'Birch Polypore',
-                'scientific': 'Piptoporus betulinus',
-                'edible': False,
-                'toxicity': 'INEDIBLE',
-                'traits': {
-                    'cap': 'hoof-shaped, white to brown',
-                    'gills': 'pores, small, white',
-                    'stem': 'none, shelf-like',
-                    'flesh': 'white, tough',
-                    'habitat': 'birch trees',
-                    'season': 'year-round'
-                }
-            },
-            'GO001': {
-                'swedish': 'Grisöra',
-                'english': "Pig's Ear",
-                'scientific': 'Gomphus clavatus',
-                'edible': True,
-                'toxicity': 'SAFE',
-                'traits': {
-                    'cap': 'funnel-shaped, brown to purple-brown',
-                    'gills': 'ridges, pale, blunt',
-                    'stem': 'solid, cylindrical',
-                    'flesh': 'pale, firm',
-                    'habitat': 'forest floor, often in groups',
-                    'season': 'summer to autumn'
-                }
-            },
-            'SU.LU': {
-                'swedish': 'Smörsopp',
-                'english': 'Slippery Jack',
-                'scientific': 'Suillus luteus',
-                'edible': True,
-                'toxicity': 'SAFE',
-                'traits': {
-                    'cap': 'convex, yellow-brown, slimy',
-                    'gills': 'pores, small, yellow',
-                    'stem': 'yellow-brown with ring',
-                    'flesh': 'pale yellow, soft',
-                    'habitat': 'pine forests',
-                    'season': 'summer to autumn'
-                }
-            },
-            'LY.PE': {
-                'swedish': 'Behandlad Behandling',
-                'english': 'Common Puffball',
-                'scientific': 'Lycoperdon perlatum',
-                'edible': True,
-                'toxicity': 'SAFE',
-                'traits': {
-                    'cap': 'round, white with spikes',
-                    'gills': 'none (spore sac)',
-                    'stem': 'none, attached to ground',
-                    'flesh': 'white, spore-filled',
-                    'habitat': 'grassland, open forest',
-                    'season': 'summer to autumn'
-                }
-            },
-            'RU001': {
-                'swedish': 'Russula',
-                'english': 'Russula species',
-                'scientific': 'Russula mairei',
-                'edible': True,
-                'toxicity': 'SAFE',
-                'traits': {
-                    'cap': 'convex, white to red',
-                    'gills': 'free, white, brittle',
-                    'stem': 'white, fragile',
-                    'flesh': 'white, crisp',
-                    'habitat': 'mixed forests',
-                    'season': 'summer to autumn'
-                }
-            },
-            'LA001': {
-                'swedish': 'Behandlad Mjölkchanterelle',
-                'english': 'Lactarius species',
-                'scientific': 'Lactarius pubescens',
-                'edible': True,
-                'toxicity': 'SAFE',
-                'traits': {
-                    'cap': 'convex, white to cream',
-                    'gills': 'decurrent, white with latex',
-                    'stem': 'white, hollow',
-                    'flesh': 'white, brittle',
-                    'habitat': 'birch forests',
-                    'season': 'summer to autumn'
-                }
-            },
-            'CA.TU': {
-                'swedish': 'Trattkantarell',
-                'english': 'Trumpet Chanterelle',
-                'scientific': 'Craterellus tubaeformis',
-                'edible': True,
-                'toxicity': 'SAFE',
-                'traits': {
-                    'cap': 'funnel-shaped, yellow-brown',
-                    'gills': 'ridges, pale yellow',
-                    'stem': 'hollow, yellow',
-                    'flesh': 'thin, pale',
-                    'habitat': 'forest floor',
-                    'season': 'summer to autumn'
-                }
-            },
-            'CP001': {
-                'swedish': 'Penselbindsvamp',
-                'english': 'Copper Inky Cap',
-                'scientific': 'Coprinellus micaceus',
-                'edible': True,
-                'toxicity': 'SAFE',
-                'traits': {
-                    'cap': 'cylindrical, brown with silvery sheen',
-                    'gills': 'attached, dark, turning black',
-                    'stem': 'white, hollow',
-                    'flesh': 'thin, pale',
-                    'habitat': 'wood debris, stumps',
-                    'season': 'autumn to spring'
-                }
-            },
-            'HY.RE': {
-                'swedish': 'Behandlad Boletaceae',
-                'english': 'Hedgehog Mushroom',
-                'scientific': 'Hydnum repandum',
-                'edible': True,
-                'toxicity': 'SAFE',
-                'traits': {
-                    'cap': 'convex, white to orange',
-                    'gills': 'spines instead of gills, pale',
-                    'stem': 'white-orange, solid',
-                    'flesh': 'white, firm',
-                    'habitat': 'mixed forest floor',
-                    'season': 'summer to autumn'
-                }
-            },
-            'CA001': {
-                'swedish': 'Behandlad Chanterelle',
-                'english': 'False Chanterelle',
-                'scientific': 'Cantharellula cibarius',
-                'edible': True,
-                'toxicity': 'SAFE',
-                'traits': {
-                    'cap': 'funnel-shaped, pale orange',
-                    'gills': 'ridges, pale',
-                    'stem': 'hollow, orange',
-                    'flesh': 'thin, orange',
-                    'habitat': 'forest floor',
-                    'season': 'summer to autumn'
-                }
-            },
-            'LA.TU': {
-                'swedish': 'Behandlad Milk Cap',
-                'english': 'Milky Cap',
-                'scientific': 'Lactarius turpis',
-                'edible': False,
-                'toxicity': 'INEDIBLE',
-                'traits': {
-                    'cap': 'convex, dark brown with rings',
-                    'gills': 'decurrent, cream with latex',
-                    'stem': 'brown, hollow',
-                    'flesh': 'cream, brittle',
-                    'habitat': 'birch forests',
-                    'season': 'summer to autumn'
-                }
-            },
-            'ST001': {
-                'swedish': 'Behandlad Stinkhorn',
-                'english': 'Stinkhorn',
-                'scientific': 'Phallus impudicus',
-                'edible': False,
-                'toxicity': 'INEDIBLE',
-                'traits': {
-                    'cap': 'latticed, orange-red, fetid smell',
-                    'gills': 'none (network structure)',
-                    'stem': 'white, spongy',
-                    'flesh': 'white, hollow',
-                    'habitat': 'soil, decaying wood',
-                    'season': 'summer to autumn'
-                }
-            },
-            'GI001': {
-                'swedish': 'Jätteska',
-                'english': 'Giant Puffball',
-                'scientific': 'Calvatia gigantea',
-                'edible': True,
-                'toxicity': 'SAFE',
-                'traits': {
-                    'cap': 'spherical, white',
-                    'gills': 'none (spore sac)',
-                    'stem': 'none',
-                    'flesh': 'white, spore-filled',
-                    'habitat': 'grassland, meadows',
-                    'season': 'summer to autumn'
-                }
-            },
-            'BL001': {
-                'swedish': 'Svampkonk',
-                'english': 'Artist\'s Conk',
-                'scientific': 'Ganoderma applanatum',
-                'edible': False,
-                'toxicity': 'INEDIBLE',
-                'traits': {
-                    'cap': 'shelf-shaped, brown-black',
-                    'gills': 'pores, small, brown',
-                    'stem': 'lateral attachment',
-                    'flesh': 'brown, corky',
-                    'habitat': 'birch and pine trees',
-                    'season': 'year-round'
-                }
-            },
-            'AU.AU': {
-                'swedish': 'Behandlad Wood Ear',
-                'english': 'Wood Ear',
-                'scientific': 'Auricularia auricula',
-                'edible': True,
-                'toxicity': 'SAFE',
-                'traits': {
-                    'cap': 'ear-shaped, dark brown',
-                    'gills': 'none (smooth underside)',
-                    'stem': 'lateral attachment',
-                    'flesh': 'gelatinous, thin',
-                    'habitat': 'dead wood, trees',
-                    'season': 'year-round'
-                }
-            },
-        }
+        """Load species from the project's species.csv file."""
+        import csv
+        self.species: Dict[str, Dict[str, Any]] = {}
+        csv_path = Path(__file__).resolve().parent.parent / "data" / "raw" / "species.csv"
+        if csv_path.exists():
+            with open(csv_path, newline="", encoding="utf-8") as fh:
+                for row in csv.DictReader(fh):
+                    sid = row["species_id"]
+                    self.species[sid] = {
+                        "swedish": row["swedish_name"],
+                        "english": row["english_name"],
+                        "scientific": row["scientific_name"],
+                        "edible": row.get("edible", "FALSE").upper() == "TRUE",
+                        "toxicity": row.get("toxicity_level", "UNKNOWN"),
+                        "traits": {},
+                    }
+        else:
+            logger.warning("species.csv not found at %s — LLM species list will be empty", csv_path)
     
     def get_species(self, species_id: str) -> Optional[Dict[str, Any]]:
         """Get species by ID."""
@@ -399,7 +114,7 @@ You will analyze descriptions of mushrooms and predict the most likely species b
 SAFETY DISCLAIMER: This system is for educational purposes only. Never use it as the sole basis for determining if a mushroom is safe to eat. 
 When in doubt, consult a professional mycologist or poison control.
 
-Available Species (20 total):
+Available Species ({species_count} total):
 {species_list}
 
 IDENTIFICATION GUIDELINES:
@@ -463,7 +178,10 @@ Be precise, logical, and prioritize safety."""
     def get_system_prompt(self) -> str:
         """Get system prompt with species list."""
         species_list = self.species_db.get_species_list_formatted()
-        return self.MUSHROOM_SYSTEM_PROMPT.format(species_list=species_list)
+        return self.MUSHROOM_SYSTEM_PROMPT.format(
+            species_list=species_list,
+            species_count=len(self.species_db.get_all_species()),
+        )
     
     def get_few_shot_examples(self) -> str:
         """Get few-shot examples for in-context learning."""

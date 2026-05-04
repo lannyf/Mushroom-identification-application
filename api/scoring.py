@@ -70,9 +70,11 @@ def image_scores(
     cr = vt["colour_ratios"]
 
     scores: Dict[str, float] = {name: 0.02 for name in TARGET_SPECIES}
-    for entry in step1["ml_prediction"]["top_k"]:
-        if entry["species"] in scores:
-            scores[entry["species"]] = entry["confidence"]
+    ml_pred = step1.get("ml_prediction")
+    if ml_pred is not None:
+        for entry in ml_pred.get("top_k", []):
+            if entry["species"] in scores:
+                scores[entry["species"]] = entry["confidence"]
 
     metrics = {
         "red_ratio":           cr["red"],

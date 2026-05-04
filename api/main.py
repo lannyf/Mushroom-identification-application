@@ -115,9 +115,15 @@ async def identify(
     trait_based = trait_scores(trait_data)
     llm_based = ollama_scores(LLM, metrics, trait_data, trait_extraction)
 
+    ml_pred = trait_extraction.get("ml_prediction")
+    image_reasoning = (
+        ml_pred["reasoning"]
+        if ml_pred is not None
+        else "CNN unavailable — using visual trait scoring only."
+    )
     image_prediction = build_prediction(
         "image",
-        trait_extraction["ml_prediction"]["reasoning"],
+        image_reasoning,
         img_scores,
     )
     trait_prediction = build_prediction(
@@ -158,7 +164,7 @@ def step2_start(body: Step2StartRequest) -> Dict[str, Any]:
       {"status": "question",   "session_id": ..., "question": ..., "options": [...], ...}
       {"status": "conclusion", "session_id": ..., "species": ...,  "edibility": ..., ...}
     """
-    return KEY_TREE.start_session(body.session_id, body.visible_traits)
+    return KEY_TREE.start_session(body.session_id, body.visible_traits, body.ml_hint)
 
 
 @app.post("/identify/Species_tree_traversal/answer")
