@@ -218,6 +218,7 @@ def test_observation_parser() -> Dict[str, Any]:
 
 def main():
     """Main entry point."""
+    setup_paths()
     parser = argparse.ArgumentParser(
         description='Validate LLM-Based Mushroom Classifier'
     )

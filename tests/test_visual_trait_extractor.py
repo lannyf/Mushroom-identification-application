@@ -6,8 +6,6 @@ Tests cover:
   - analyse_colours: returns expected keys and valid ratios
   - analyse_shape: returns expected keys and valid shape names
   - analyse_texture: returns expected keys
-  - score_species: dominant colour/shape/texture influence scores
-  - _normalise: sums to 1.0, handles zero scores
   - extract: end-to-end with a synthetic PNG image
 """
 
@@ -23,13 +21,11 @@ import pytest
 
 from models.visual_trait_extractor import (
     _hsv_to_name,
-    _normalise,
     analyse_brightness,
     analyse_colours,
     analyse_shape,
     analyse_texture,
     extract,
-    score_species,
 )
 
 
@@ -222,97 +218,6 @@ class TestAnalyseBrightness:
 
 
 # ---------------------------------------------------------------------------
-# score_species
-# ---------------------------------------------------------------------------
-
-class TestScoreSpecies:
-    def _default_colour(self, dominant="unknown") -> dict:
-        return {
-            "dominant_color": dominant, "secondary_color": "unknown",
-            "red_ratio": 0.0, "orange_red_ratio": 0.0,
-            "orange_yellow_ratio": 0.0, "brown_ratio": 0.0,
-            "white_ratio": 0.0, "dark_ratio": 0.0,
-        }
-
-    def _default_shape(self, cap_shape="convex") -> dict:
-        return {"cap_shape": cap_shape, "aspect_ratio": 1.0, "circularity": 0.8}
-
-    def _default_texture(self, surface="smooth", has_ridges=False) -> dict:
-        return {"surface_texture": surface, "edge_density": 0.05, "has_ridges": has_ridges}
-
-    def test_returns_all_species(self):
-        from models.visual_trait_extractor import _ALL_SPECIES
-        scores = score_species(self._default_colour(), self._default_shape(), self._default_texture())
-        for sp in _ALL_SPECIES:
-            assert sp in scores
-
-    def test_red_cap_boosts_fly_agaric(self):
-        colour = self._default_colour("red")
-        colour["red_ratio"] = 0.8
-        scores = score_species(colour, self._default_shape(), self._default_texture())
-        assert scores["Fly Agaric"] > scores["Chanterelle"]
-        assert scores["Fly Agaric"] > scores["Porcini"]
-
-    def test_brown_cap_boosts_porcini(self):
-        colour = self._default_colour("brown")
-        colour["brown_ratio"] = 0.7
-        scores = score_species(colour, self._default_shape(), self._default_texture())
-        assert scores["Porcini"] > scores["Fly Agaric"]
-        assert scores["Porcini"] > scores["Amanita virosa"]
-
-    def test_white_cap_boosts_amanita_virosa(self):
-        colour = self._default_colour("white")
-        colour["white_ratio"] = 0.8
-        scores = score_species(colour, self._default_shape(), self._default_texture())
-        assert scores["Amanita virosa"] > scores["Porcini"]
-
-    def test_dark_cap_boosts_black_trumpet(self):
-        colour = self._default_colour("black")
-        colour["dark_ratio"] = 0.8
-        scores = score_species(colour, self._default_shape(), self._default_texture())
-        assert scores["Black Trumpet"] > scores["Chanterelle"]
-
-    def test_ridges_boost_chanterelle(self):
-        colour = self._default_colour("yellow")
-        colour["orange_yellow_ratio"] = 0.5
-        scores = score_species(colour, self._default_shape(), self._default_texture(has_ridges=True))
-        assert scores["Chanterelle"] > scores["Porcini"]
-
-    def test_scores_all_positive(self):
-        scores = score_species(self._default_colour(), self._default_shape(), self._default_texture())
-        for sp, val in scores.items():
-            assert val >= 0, f"Negative score for {sp}: {val}"
-
-
-# ---------------------------------------------------------------------------
-# _normalise
-# ---------------------------------------------------------------------------
-
-class TestNormalise:
-    def test_sums_to_one(self):
-        scores = {"A": 1.0, "B": 2.0, "C": 3.0}
-        norm = _normalise(scores)
-        assert abs(sum(norm.values()) - 1.0) < 1e-9
-
-    def test_uniform_for_all_zeros(self):
-        scores = {"A": 0.0, "B": 0.0}
-        norm = _normalise(scores)
-        assert abs(norm["A"] - 0.5) < 1e-9
-        assert abs(norm["B"] - 0.5) < 1e-9
-
-    def test_negative_values_clamped(self):
-        scores = {"A": -1.0, "B": 2.0}
-        norm = _normalise(scores)
-        assert norm["A"] == 0.0
-        assert norm["B"] == pytest.approx(1.0)
-
-    def test_preserves_ordering(self):
-        scores = {"A": 1.0, "B": 5.0, "C": 2.0}
-        norm = _normalise(scores)
-        assert norm["B"] > norm["C"] > norm["A"]
-
-
-# ---------------------------------------------------------------------------
 # extract (end-to-end, no trained CNN)
 # ---------------------------------------------------------------------------
 
@@ -322,36 +227,24 @@ class TestExtract:
         assert "ml_prediction" in result
         assert "visible_traits" in result
 
-    def test_ml_prediction_has_required_keys(self):
+    def test_ml_prediction_is_none_without_cnn(self):
+        """When no trained CNN is available, ml_prediction should be None."""
         result = extract(RED_PNG)
-        ml = result["ml_prediction"]
-        for key in ("top_species", "confidence", "method", "top_k", "reasoning"):
-            assert key in ml
+        assert result["ml_prediction"] is None
 
     def test_visible_traits_has_required_keys(self):
         result = extract(RED_PNG)
         vt = result["visible_traits"]
         for key in ("dominant_color", "cap_shape", "surface_texture",
-                    "has_ridges", "brightness", "colour_ratios",
-                    "ml_top_species", "ml_confidence"):
+                    "has_ridges", "brightness", "colour_ratios"):
             assert key in vt
 
-    def test_confidence_in_0_1(self):
+    def test_visible_traits_has_no_ml_fields(self):
+        """visible_traits must not contain CNN prediction fields."""
         result = extract(RED_PNG)
-        conf = result["ml_prediction"]["confidence"]
-        assert 0.0 <= conf <= 1.0
-
-    def test_top_k_is_list_of_dicts(self):
-        result = extract(RED_PNG)
-        top_k = result["ml_prediction"]["top_k"]
-        assert isinstance(top_k, list)
-        assert len(top_k) >= 1
-        assert "species" in top_k[0]
-        assert "confidence" in top_k[0]
-
-    def test_method_is_cv_fallback_without_weights(self):
-        result = extract(WHITE_PNG)
-        assert result["ml_prediction"]["method"] in {"cv_fallback", "cnn"}
+        vt = result["visible_traits"]
+        assert "ml_top_species" not in vt
+        assert "ml_confidence" not in vt
 
     def test_colour_ratios_present(self):
         result = extract(RED_PNG)
@@ -359,15 +252,7 @@ class TestExtract:
         for key in ("red", "orange_yellow", "brown", "white", "dark"):
             assert key in cr
 
-    def test_visible_traits_include_ml_hint(self):
+    def test_red_image_ratings(self):
+        """A strongly red image should report high red_ratio."""
         result = extract(RED_PNG)
-        vt = result["visible_traits"]
-        ml = result["ml_prediction"]
-        assert vt["ml_top_species"] == ml["top_species"]
-        assert vt["ml_confidence"] == ml["confidence"]
-
-    def test_red_image_top_species_not_chanterelle(self):
-        """A strongly red image should not rank Chanterelle first."""
-        result = extract(RED_PNG)
-        # We don't hard-assert species (no trained CNN), but verify it runs
-        assert result["ml_prediction"]["top_species"] != ""
+        assert result["visible_traits"]["colour_ratios"]["red"] > 0.5

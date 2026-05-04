@@ -527,6 +527,27 @@ class TraitDatabaseComparator:
         return results
 
     # ------------------------------------------------------------------
+    def rank_all_species(self, visible_traits: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Compare *visible_traits* against every species in the database and
+        return a sorted list (best match first) with metadata.
+        """
+        results = []
+        for row in self._species:
+            sid = row["species_id"]
+            db_traits = _load_traits(sid, self._trait_rows)
+            match = _compare_visible_to_db(visible_traits, db_traits)
+            results.append({
+                "species_id": sid,
+                "swedish_name": row["swedish_name"],
+                "english_name": row["english_name"],
+                "score": match["score"],
+            })
+
+        results.sort(key=lambda x: x["score"], reverse=True)
+        return results
+
+    # ------------------------------------------------------------------
     @staticmethod
     def _diff_traits(
         candidate: Dict[str, Dict[str, str]],

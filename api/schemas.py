@@ -10,6 +10,7 @@ from pydantic import BaseModel
 class Step2StartRequest(BaseModel):
     session_id: Optional[str] = None
     visible_traits: Dict[str, Any]
+    ml_hint: Optional[Dict[str, Any]] = None
 
 
 class Step2AnswerRequest(BaseModel):

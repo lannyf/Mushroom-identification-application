@@ -89,9 +89,15 @@ _TREE_UNSUPPORTED: Dict[str, Dict[str, str]] = {
 }
 
 
-def _tree_compatibility(visible_traits: Dict[str, Any]) -> Dict[str, Any]:
-    ml_species = str(visible_traits.get("ml_top_species", "")).strip()
-    ml_confidence = float(visible_traits.get("ml_confidence", 0.0) or 0.0)
+def _tree_compatibility(
+    visible_traits: Dict[str, Any],
+    ml_hint: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    ml_species = ""
+    ml_confidence = 0.0
+    if ml_hint is not None:
+        ml_species = str(ml_hint.get("top_species", "")).strip()
+        ml_confidence = float(ml_hint.get("confidence", 0.0) or 0.0)
 
     compatibility: Dict[str, Any] = {
         "ml_top_species": ml_species,
@@ -227,8 +233,12 @@ def parse_key_xml(xml_path: str) -> QuestionNode:
 # Trait → answer auto-mapper
 # ---------------------------------------------------------------------------
 
-def _try_auto_answer(question: str, options: List[str],
-                     traits: Dict[str, Any]) -> Optional[str]:
+def _try_auto_answer(
+    question: str,
+    options: List[str],
+    traits: Dict[str, Any],
+    ml_hint: Optional[Dict[str, Any]] = None,
+) -> Optional[str]:
     """
     Try to derive the answer to *question* from Step 1 visible_traits.
 
@@ -245,8 +255,12 @@ def _try_auto_answer(question: str, options: List[str],
     brown = cr.get("brown", 0)
     red   = cr.get("red", 0)
     white = cr.get("white", 0)
-    ml_species = str(traits.get("ml_top_species", ""))
-    ml_conf = float(traits.get("ml_confidence", 0.0) or 0.0)
+
+    ml_species = ""
+    ml_conf = 0.0
+    if ml_hint is not None:
+        ml_species = str(ml_hint.get("top_species", ""))
+        ml_conf = float(ml_hint.get("confidence", 0.0) or 0.0)
 
     if ml_conf >= 0.75:
         ml_question_hints = {
@@ -399,6 +413,7 @@ class TraversalSession:
     current: QuestionNode              # the question currently being asked
     visible_traits: Dict[str, Any]     # Step 1 output
     tree_compatibility: Dict[str, Any]
+    ml_hint: Optional[Dict[str, Any]] = field(default=None)
     path: List[str] = field(default_factory=list)       # answers chosen so far
     auto_answered: List[Dict] = field(default_factory=list)  # auto-resolved Q→A
 
@@ -425,15 +440,21 @@ class KeyTreeEngine:
         self,
         session_id: Optional[str],
         visible_traits: Dict[str, Any],
+        ml_hint: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
         Begin a new traversal session using Step 1 visible_traits.
+
+        Args:
+            session_id: Optional existing session ID.
+            visible_traits: Structured traits from visual_trait_extractor.extract().
+            ml_hint: Optional CNN hint dict with ``top_species`` and ``confidence``.
 
         Returns the first question the user needs to answer (or a conclusion
         if the tree can be traversed entirely from the image data).
         """
         sid = session_id or str(uuid.uuid4())
-        compatibility = _tree_compatibility(visible_traits)
+        compatibility = _tree_compatibility(visible_traits, ml_hint)
         if compatibility["tree_policy"] == "skip_tree":
             logger.debug(
                 "Skipping tree traversal for %s (%.3f): %s",
@@ -463,6 +484,7 @@ class KeyTreeEngine:
             current=self.root,
             visible_traits=visible_traits,
             tree_compatibility=compatibility,
+            ml_hint=ml_hint,
         )
         self._sessions[sid] = session
         logger.debug("New session %s", sid)
@@ -495,6 +517,7 @@ class KeyTreeEngine:
             session.current.question,
             options,
             session.visible_traits,
+            session.ml_hint,
         )
         if auto:
             logger.debug("Auto-answer: '%s' → '%s'", session.current.question, auto)

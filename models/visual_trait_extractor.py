@@ -1,19 +1,22 @@
 """
 Visual Trait Extractor — Step 1 of the mushroom identification pipeline.
 
-Analyses a raw image using computer vision to produce:
-  1. A colour-and-shape based species prediction (top-k list with confidence).
-  2. A structured dictionary of visible traits that can be fed directly into
-     the downstream LLM traversal step (Step 2).
+Analyses a raw image (optionally constrained by a segmentation mask) using
+classical computer vision to produce a structured dictionary of visible
+traits.  The extractor is intentionally **pure**: it describes what it sees
+(colour, shape, texture, brightness) but never attempts to identify the
+species.  Species classification is left to downstream components (CNN hint,
+trait-database comparator, key-tree traversal, LLM, and final aggregator).
 
-No trained neural-network weights are required; all analysis is done with
-classical CV (OpenCV + colour clustering).
+If a trained CNN is available, its top-k output is returned as an optional
+``ml_prediction`` hint, but this is produced by the CNN model — not by the
+trait extractor itself.
 """
 
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import cv2
 import numpy as np
@@ -108,20 +111,11 @@ def analyse_colours(bgr: np.ndarray) -> Dict[str, Any]:
     r, g, b = arr[:, :, 2], arr[:, :, 1], arr[:, :, 0]
 
     red_ratio          = float(np.mean((r > 150) & (r > g * 1.25) & (r > b * 1.25)))
-    # Orange-red: Fly Agaric caps photograph as orange-red in natural light
-    # (high red, moderate green, low blue) — distinct from chanterelle orange-yellow
     orange_red_ratio   = float(np.mean((r > 140) & (g > 50) & (g < 130) & (b < 80)))
     orange_yellow_ratio = float(np.mean((r > 140) & (g > 90) & (b < 140)))
     brown_ratio        = float(np.mean((r > 80)  & (g > 45) & (b < 90) & (r > g) & (g > b)))
     white_ratio        = float(np.mean((r > 185) & (g > 185) & (b > 185)))
     dark_ratio         = float(np.mean((r < 60)  & (g < 60)  & (b < 60)))
-
-    # Full-scene photos can let forest background dominate KMeans even when the
-    # subject is a classic red Fly Agaric cap. Preserve that foreground cue in
-    # the structured traits so Step 2 does not branch on irrelevant colours.
-    if red_ratio >= 0.09 and white_ratio >= 0.05 and red_ratio > orange_yellow_ratio:
-        dominant = "red"
-        secondary = "white"
 
     return {
         "dominant_color":        dominant,
@@ -133,24 +127,6 @@ def analyse_colours(bgr: np.ndarray) -> Dict[str, Any]:
         "white_ratio":           round(white_ratio, 3),
         "dark_ratio":            round(dark_ratio, 3),
     }
-
-
-def _looks_like_fly_agaric_signature(colour: Dict[str, Any], shape: Dict[str, Any]) -> bool:
-    red = float(colour["red_ratio"])
-    orange_red = float(colour.get("orange_red_ratio", 0.0))
-    orange_yellow = float(colour["orange_yellow_ratio"])
-    white = float(colour["white_ratio"])
-    shape_name = str(shape.get("cap_shape", "")).lower()
-
-    spotted_red_cap = red >= 0.09 and white >= 0.05 and red > orange_yellow
-    warm_red_cap = (
-        red >= 0.08
-        and orange_red >= 0.03
-        and shape_name in {"convex", "flat", "bell-shaped"}
-    )
-    pale_spotted_cap = white >= 0.10 and red >= 0.07
-
-    return spotted_red_cap or warm_red_cap or pale_spotted_cap
 
 
 # ---------------------------------------------------------------------------
@@ -259,99 +235,6 @@ def analyse_brightness(bgr: np.ndarray) -> str:
 # Species scoring from visual features
 # ---------------------------------------------------------------------------
 
-from config.image_model_config import SPECIES as _ALL_SPECIES
-
-
-def score_species(
-    colour: Dict[str, Any],
-    shape:  Dict[str, Any],
-    texture: Dict[str, Any],
-) -> Dict[str, float]:
-    """
-    Score each candidate species using visual features.
-
-    Combines colour, shape, and texture signals with weighted rules.
-    Returns raw (unnormalised) scores.
-    """
-    scores: Dict[str, float] = {sp: 0.02 for sp in _ALL_SPECIES}
-
-    dom   = colour["dominant_color"]
-    r_r   = colour["red_ratio"]
-    or_r  = colour.get("orange_red_ratio", 0.0)
-    oy_r  = colour["orange_yellow_ratio"]
-    br_r  = colour["brown_ratio"]
-    wh_r  = colour["white_ratio"]
-    dk_r  = colour["dark_ratio"]
-    shape_name = shape["cap_shape"]
-    has_ridges = texture["has_ridges"]
-    texture_name = texture["surface_texture"]
-
-    # --- colour signals ---
-    # orange_red captures the typical Fly Agaric cap colour photographed in natural light
-    scores["Fly Agaric"]        += r_r * 5.0 + or_r * 4.0 + wh_r * 1.4
-    scores["Amanita virosa"]    += wh_r * 2.5
-    # Dampen Chanterelle when orange_red+white is present (Fly Agaric pattern)
-    chanterelle_oy = max(0.0, oy_r - or_r) if wh_r > 0.02 else oy_r
-    scores["Chanterelle"]       += chanterelle_oy * 4.0
-    scores["False Chanterelle"] += oy_r * 2.6
-    scores["Porcini"]           += br_r * 4.2
-    scores["Other Boletus"]     += br_r * 3.3
-    scores["Black Trumpet"]     += dk_r * 3.5 + (1.0 - wh_r) * 0.15
-
-    if dom in {"orange", "yellow", "orange-yellow"}:
-        scores["Chanterelle"]       += 0.6
-        scores["False Chanterelle"] += 0.3
-    if dom in {"orange", "orange-yellow", "red"} and wh_r > 0.02:
-        # Orange/red cap + white elements → Fly Agaric pattern (white spots/warts)
-        scores["Fly Agaric"] += 0.7
-        scores["Chanterelle"] -= 0.4
-    if dom == "red":
-        scores["Fly Agaric"] += 0.8
-    if dom == "white":
-        scores["Amanita virosa"] += 0.6
-    if dom in {"brown", "olive-brown", "tan"}:
-        scores["Porcini"]      += 0.4
-        scores["Other Boletus"] += 0.35
-    if dom in {"black", "grey"}:
-        scores["Black Trumpet"] += 0.7
-
-    # --- shape signals ---
-    if shape_name == "funnel-shaped":
-        scores["Chanterelle"]       += 0.5
-        scores["False Chanterelle"] += 0.3
-        scores["Black Trumpet"]     += 0.2
-    if shape_name in {"convex", "flat"}:
-        scores["Porcini"]      += 0.25
-        scores["Other Boletus"] += 0.2
-    if shape_name == "bell-shaped":
-        scores["Fly Agaric"]     += 0.35
-        scores["Amanita virosa"] += 0.25
-    if shape_name == "wavy":
-        scores["Chanterelle"]       += 0.4
-        scores["False Chanterelle"] += 0.2
-
-    # --- texture / ridge signals ---
-    if has_ridges:
-        scores["Chanterelle"]       += 0.5
-        scores["False Chanterelle"] += 0.25
-    if texture_name == "scaly":
-        scores["Fly Agaric"]     += 0.3
-        scores["Amanita virosa"] += 0.1
-    if texture_name == "smooth":
-        scores["Chanterelle"] += 0.1
-        scores["Porcini"]     += 0.1
-
-    return scores
-
-
-def _normalise(scores: Dict[str, float]) -> Dict[str, float]:
-    total = sum(max(v, 0.0) for v in scores.values())
-    if total <= 0:
-        even = 1.0 / len(scores)
-        return {k: even for k in scores}
-    return {k: max(v, 0.0) / total for k, v in scores.items()}
-
-
 # ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
@@ -377,9 +260,6 @@ def analyse_colours_masked(bgr: np.ndarray, mask: np.ndarray) -> Dict[str, Any]:
     brown_ratio = float(np.mean((r > 80)  & (g > 45) & (b < 90) & (r > g) & (g > b)))
     white_ratio = float(np.mean((r > 185) & (g > 185) & (b > 185)))
     dark_ratio = float(np.mean((r < 60)  & (g < 60)  & (b < 60)))
-    if red_ratio >= 0.09 and white_ratio >= 0.05 and red_ratio > orange_yellow_ratio:
-        dominant = "red"
-        secondary = "white"
     return {
         "dominant_color": dominant,
         "secondary_color": secondary,
@@ -466,14 +346,13 @@ def extract(image_bytes: bytes) -> Dict[str, Any]:
     shape = analyse_shape(bgr)
     texture = analyse_texture(bgr)
     brightness = analyse_brightness(bgr)
-    fly_agaric_like = _looks_like_fly_agaric_signature(colour, shape)
 
     visible_traits: Dict[str, Any] = {
         "dominant_color": colour["dominant_color"],
         "secondary_color": colour["secondary_color"],
         "cap_shape": shape["cap_shape"],
         "surface_texture": texture["surface_texture"],
-        "has_ridges": texture["has_ridges"] and not fly_agaric_like,
+        "has_ridges": texture["has_ridges"],
         "brightness": brightness,
         "colour_ratios": {
             "red": colour["red_ratio"],
@@ -485,10 +364,8 @@ def extract(image_bytes: bytes) -> Dict[str, Any]:
         },
     }
 
-    # --- Species scoring: CNN preferred, CV as fallback ---
-    method = "cv_fallback"
-    ordered: List[Tuple[str, float]] = []
-
+    # --- Optional CNN hint (not a prediction by the trait extractor) ---
+    ml_prediction: Optional[Dict[str, Any]] = None
     try:
         from models.cnn_classifier import get_classifier
         cnn = get_classifier()
@@ -496,48 +373,28 @@ def extract(image_bytes: bytes) -> Dict[str, Any]:
             cnn_scores = cnn.predict(image_bytes)
             if cnn_scores is not None:
                 ordered = sorted(cnn_scores.items(), key=lambda x: x[1], reverse=True)
-                method = "cnn"
-                logger.debug("Step-1: using CNN predictions")
+                top_species, top_conf = ordered[0]
+                ml_prediction = {
+                    "top_species": top_species,
+                    "confidence": round(top_conf, 4),
+                    "method": "cnn",
+                    "top_k": [
+                        {"species": sp, "confidence": round(sc, 4)}
+                        for sp, sc in ordered[:5]
+                    ],
+                    "reasoning": (
+                        f"EfficientNet-B3 CNN prediction — "
+                        f"dominant colour '{colour['dominant_color']}', "
+                        f"cap shape '{shape['cap_shape']}'."
+                    ),
+                }
+                logger.debug("Step-1: CNN hint %s (%.4f)", top_species, top_conf)
     except Exception as exc:
-        logger.debug("CNN unavailable, using CV fallback: %s", exc)
-
-    if not ordered:
-        raw_scores = score_species(colour, shape, texture)
-        norm_scores = _normalise(raw_scores)
-        ordered = sorted(norm_scores.items(), key=lambda x: x[1], reverse=True)
-
-    top_species, top_conf = ordered[0]
-
-    if method == "cnn":
-        reasoning = (
-            f"EfficientNet-B3 CNN prediction — "
-            f"dominant colour '{colour['dominant_color']}', "
-            f"cap shape '{shape['cap_shape']}'."
-        )
-    else:
-        reasoning = (
-            f"CV fallback (no trained CNN weights) — "
-            f"dominant colour '{colour['dominant_color']}', "
-            f"cap shape '{shape['cap_shape']}', "
-            f"texture '{texture['surface_texture']}'"
-            + (", ridges detected" if texture["has_ridges"] else "")
-            + ". Train the CNN with scripts/train_cnn.py for real ML predictions."
-        )
-
-    ml_prediction: Dict[str, Any] = {
-        "top_species": top_species,
-        "confidence": round(top_conf, 4),
-        "method": method,
-        "top_k": [{"species": sp, "confidence": round(sc, 4)} for sp, sc in ordered[:5]],
-        "reasoning": reasoning,
-    }
-    visible_traits["ml_top_species"] = top_species
-    visible_traits["ml_confidence"] = round(top_conf, 4)
+        logger.debug("CNN unavailable: %s", exc)
 
     # --- Segmentation metadata and optional masked trait replacement ---
     selected_mask = None
     try:
-        # Only run segmentation if explicitly enabled for metadata or masked traits
         if seg_cfg.USE_MASK_FOR_TRAITS or getattr(seg_cfg, "RUN_SEGMENTATION_METADATA", False):
             from models.mushroom_segmenter import get_segmenter
             seg = get_segmenter()
@@ -546,7 +403,6 @@ def extract(image_bytes: bytes) -> Dict[str, Any]:
             sel_idx = seg_res.get("selected_index")
             if sel_idx is not None and instances:
                 sel = instances[sel_idx]
-                # Only add metadata fields when RUN_SEGMENTATION_METADATA is enabled
                 if getattr(seg_cfg, "RUN_SEGMENTATION_METADATA", False):
                     visible_traits["localization_source"] = "segmentation"
                     visible_traits["localization_confidence"] = round(float(sel.get("model_confidence", 0.0)), 3)
@@ -576,16 +432,11 @@ def extract(image_bytes: bytes) -> Dict[str, Any]:
                 and float(visible_traits.get("localization_metadata", {}).get("boundary_irregularity", 1.0)) <= seg_cfg.MAX_BOUNDARY_IRREGULARITY
             )
             if sel_ok:
-                # apply cleanup conservatively
-                from models.mushroom_segmenter import Segmenter as _SegClass
-                # we assume cleaned_mask is already present from the segmenter
                 mask_for_traits = selected_mask
-                # compute masked traits
                 m_colour = analyse_colours_masked(bgr, mask_for_traits)
                 m_shape = analyse_shape_masked(bgr, mask_for_traits)
                 m_texture = analyse_texture_masked(bgr, mask_for_traits)
                 m_brightness = analyse_brightness_masked(bgr, mask_for_traits)
-                # Replace trait families (policy: always use masked trait for active families)
                 visible_traits["dominant_color"] = m_colour["dominant_color"]
                 visible_traits["secondary_color"] = m_colour["secondary_color"]
                 visible_traits["colour_ratios"]["red"] = m_colour["red_ratio"]
@@ -596,13 +447,12 @@ def extract(image_bytes: bytes) -> Dict[str, Any]:
                 visible_traits["colour_ratios"]["dark"] = m_colour.get("dark_ratio", 0.0)
                 visible_traits["cap_shape"] = m_shape.get("cap_shape", visible_traits.get("cap_shape"))
                 visible_traits["surface_texture"] = m_texture.get("surface_texture", visible_traits.get("surface_texture"))
-                visible_traits["has_ridges"] = m_texture.get("has_ridges", visible_traits.get("has_ridges")) and not fly_agaric_like
+                visible_traits["has_ridges"] = m_texture.get("has_ridges", visible_traits.get("has_ridges"))
                 visible_traits["brightness"] = m_brightness
                 visible_traits["mask_used"] = True
-                # mark trait ownership
                 visible_traits["trait_source_by_key"] = {k: "mask" for k in ["dominant_color", "cap_shape", "surface_texture", "has_ridges", "brightness"]}
     except Exception as exc:
         logger.debug("Error applying masked traits: %s", exc)
 
-    logger.debug("Step-1 result: %s (%.4f) via %s", top_species, top_conf, method)
+    logger.debug("Step-1: extracted %d traits", len(visible_traits))
     return {"ml_prediction": ml_prediction, "visible_traits": visible_traits}

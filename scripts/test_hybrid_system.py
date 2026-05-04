@@ -323,6 +323,7 @@ def test_method_comparison():
 
 def main():
     """Main entry point."""
+    setup_paths()
     parser = argparse.ArgumentParser(
         description='Integration tests for hybrid classification system'
     )

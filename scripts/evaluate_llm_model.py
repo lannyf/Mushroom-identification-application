@@ -102,7 +102,7 @@ def evaluate_llm_classifier(backend_type: str = 'mock', api_key: str = None) -> 
     safety_correct = 0
     confidence_values = []
     
-    species_confusion = {s: ConfusionMatrix(s) for s in species_db.get_all_species().values()}
+    species_confusion = {info['english']: ConfusionMatrix(info['english']) for info in species_db.get_all_species().values()}
     
     for test in test_cases:
         logger.debug(f"Testing: {test['observation'][:50]}...")
@@ -266,6 +266,7 @@ def compare_with_trait_classifier() -> Dict[str, Any]:
 
 def main():
     """Main entry point."""
+    setup_paths()
     parser = argparse.ArgumentParser(
         description='Evaluate LLM-Based Mushroom Classifier'
     )

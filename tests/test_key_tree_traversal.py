@@ -92,29 +92,26 @@ class TestStartSession:
         assert isinstance(result.get("auto_answered", []), list)
 
     def test_high_confidence_unsupported_species_skips_tree(self, engine):
-        result = engine.start_session(None, {
-            "ml_top_species": "Fly Agaric",
-            "ml_confidence": 0.95,
-        })
+        result = engine.start_session(
+            None, {}, ml_hint={"top_species": "Fly Agaric", "confidence": 0.95}
+        )
         assert result["status"] == "conclusion"
         assert result["species"] == "Flugsvamp"
         assert result["tree_compatibility"]["tree_policy"] == "skip_tree"
         assert result["source"] == "ml_precheck"
 
     def test_high_confidence_lookalike_only_species_skips_tree(self, engine):
-        result = engine.start_session(None, {
-            "ml_top_species": "Amanita virosa",
-            "ml_confidence": 0.97,
-        })
+        result = engine.start_session(
+            None, {}, ml_hint={"top_species": "Amanita virosa", "confidence": 0.97}
+        )
         assert result["status"] == "conclusion"
         assert result["species"] == "Änglsvamp"
         assert result["tree_compatibility"]["tree_support"] == "lookalike_only"
 
     def test_low_confidence_unsupported_species_falls_back_to_questions(self, engine):
-        result = engine.start_session(None, {
-            "ml_top_species": "Fly Agaric",
-            "ml_confidence": 0.55,
-        })
+        result = engine.start_session(
+            None, {}, ml_hint={"top_species": "Fly Agaric", "confidence": 0.55}
+        )
         assert result["status"] == "question"
         assert result["tree_compatibility"]["tree_policy"] == "branch_only"
 
