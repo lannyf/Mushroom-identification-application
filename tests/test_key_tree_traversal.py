@@ -204,3 +204,52 @@ class TestSessionIsolation:
             engine.answer(s1["session_id"], s1["options"][0])
             state2 = engine.get_session(s2["session_id"])
             assert state2 is not None
+
+
+# ---------------------------------------------------------------------------
+# pre_answers
+# ---------------------------------------------------------------------------
+
+class TestPreAnswers:
+    def test_pre_answer_used_when_traits_ambiguous(self, engine):
+        """When visible_traits cannot auto-answer, pre_answers should be used."""
+        pre_answers = {"Hur ser svampen ut?": "Undersidan har rör"}
+        result = engine.start_session(None, EMPTY_TRAITS, pre_answers=pre_answers)
+        # The engine should have used the pre_answer and advanced
+        assert result["status"] in {"question", "conclusion"}
+        # First auto_answered entry should be from user_pre_answer
+        auto = result.get("auto_answered", [])
+        assert any(a["source"] == "user_pre_answer" for a in auto)
+
+    def test_pre_answer_ignored_when_traits_conclusive(self, engine):
+        """Image-derived traits take precedence over pre_answers."""
+        # CHANTERELLE_TRAITS clearly auto-answers to ridges
+        pre_answers = {"Hur ser svampen ut?": "Undersidan har rör"}
+        result = engine.start_session(None, CHANTERELLE_TRAITS, pre_answers=pre_answers)
+        # Should have auto-answered from image_analysis, not user_pre_answer
+        auto = result.get("auto_answered", [])
+        ridge_auto = [a for a in auto if a.get("answer") == "Undersidan har åsar eller ådror"]
+        assert len(ridge_auto) >= 1
+        assert ridge_auto[0]["source"] == "image_analysis"
+        # Should NOT have used the conflicting pre_answer
+        assert not any(a["source"] == "user_pre_answer" for a in auto)
+
+    def test_invalid_pre_answer_ignored(self, engine):
+        """Pre_answers that don't match any option are silently ignored."""
+        pre_answers = {"Hur ser svampen ut?": "This is not a valid option"}
+        result = engine.start_session(None, EMPTY_TRAITS, pre_answers=pre_answers)
+        # Should return the question because invalid pre_answer is ignored
+        assert result["status"] == "question"
+        assert result["question"] == "Hur ser svampen ut?"
+        auto = result.get("auto_answered", [])
+        assert len(auto) == 0
+
+    def test_pre_answer_source_tracked(self, engine):
+        """When pre_answers are used, source is recorded as 'user_pre_answer'."""
+        pre_answers = {"Hur ser svampen ut?": "Undersidan har rör"}
+        result = engine.start_session(None, EMPTY_TRAITS, pre_answers=pre_answers)
+        auto = result.get("auto_answered", [])
+        pre = [a for a in auto if a["source"] == "user_pre_answer"]
+        assert len(pre) >= 1
+        assert pre[0]["question"] == "Hur ser svampen ut?"
+        assert pre[0]["answer"] == "Undersidan har rör"

@@ -58,9 +58,6 @@ METHODS = {
     "trait_db": TraitDBRunner,
     "llm": LLMRunner,
     "multimodal_final": lambda: MultimodalRunner(strategy="final_aggregator"),
-    "multimodal_weighted": lambda: MultimodalRunner(strategy="weighted"),
-    "multimodal_geometric": lambda: MultimodalRunner(strategy="geometric"),
-    "multimodal_voting": lambda: MultimodalRunner(strategy="voting"),
 }
 
 
