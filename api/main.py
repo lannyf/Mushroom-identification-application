@@ -9,39 +9,31 @@ Pipeline (mirrors Sys.txt spec):
   Step 3 — Trait database comparison + lookalike check  (models/trait_database_comparator.py)
   Step 4 — Final result: ML alternatives + lookalikes + top candidate      (models/final_aggregator.py)
 
-Business logic helpers are in api/scoring.py.
 Pydantic request models are in api/schemas.py.
 """
 
 from __future__ import annotations
 
 import csv
-import json
 import logging
 from pathlib import Path
 from typing import Any, Dict
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.schemas import (
+    LLMPredictRequest,
     Step2AnswerRequest,
     Step2StartRequest,
     Step3CompareRequest,
     Step4FinalizeRequest,
 )
-from api.scoring import (
-    adapt_result,
-    build_prediction,
-    image_scores,
-    ollama_scores,
-    trait_scores,
-)
 from models.final_aggregator import FinalAggregator
-from models.hybrid_classifier import AggregationMethod, HybridClassifier
 from models.key_tree_traversal import KeyTreeEngine
 from models.llm_classifier import LLMClassifier, OllamaBackend
 from models.trait_database_comparator import TraitDatabaseComparator
+from models.visual_trait_extractor import extract as extract_visual_traits
 
 logger = logging.getLogger(__name__)
 
@@ -71,21 +63,20 @@ def _load_species_metadata() -> Dict[str, Dict[str, str]]:
 
 
 SPECIES    = _load_species_metadata()
-HYBRID     = HybridClassifier(aggregation_method=AggregationMethod.WEIGHTED_AVERAGE)
 KEY_TREE   = KeyTreeEngine(str(KEY_XML))
 COMPARATOR = TraitDatabaseComparator(str(DATA_RAW_DIR))
 AGGREGATOR = FinalAggregator(str(SPECIES_CSV))
 
-# Initialise Ollama LLM classifier — falls back to None if server not running
+# Initialise Ollama LLM classifier — used only by the standalone /identify/llm_predict endpoint
 if OllamaBackend.is_available():
     try:
         LLM = LLMClassifier(backend_type="ollama")
         logger.info("Ollama LLM classifier ready")
     except Exception as _e:
-        logger.warning(f"Ollama init failed, using rule-based fallback: {_e}")
+        logger.warning("Ollama init failed: %s", _e)
         LLM = None
 else:
-    logger.info("Ollama not reachable — using rule-based LLM fallback (start with: ollama serve)")
+    logger.info("Ollama not reachable — LLM endpoint will return 503 (start with: ollama serve)")
     LLM = None
 
 
@@ -93,57 +84,48 @@ else:
 def health() -> Dict[str, str]:
     return {
         "status": "ok",
-        "llm": "ollama" if LLM is not None else "rule-based",
+        "llm": "ollama" if LLM is not None else "unavailable",
     }
 
 
 @app.post("/identify")
-async def identify(
-    image: UploadFile = File(...),
-    traits: str = Form("{}"),
-) -> Dict[str, Any]:
-    try:
-        trait_data = json.loads(traits) if traits else {}
-    except json.JSONDecodeError as exc:
-        raise HTTPException(status_code=400, detail=f"Invalid traits JSON: {exc}") from exc
+async def identify(image: UploadFile = File(...)) -> Dict[str, Any]:
+    """
+    Step 1 — Pure visual trait extraction.
 
+    Upload an image. The system analyses it using classical computer vision
+    (colour, shape, texture, brightness) and an optional CNN prediction.
+
+    Returns:
+      {
+        "trait_extraction": {
+          "visible_traits": {...},
+          "ml_prediction": {...} | null
+        },
+        "image_analysis": {
+          "red_ratio": ...,
+          "orange_red_ratio": ...,
+          "orange_yellow_ratio": ...,
+          "brown_ratio": ...,
+          "white_ratio": ...
+        }
+      }
+    """
     image_bytes = await image.read()
     if not image_bytes:
         raise HTTPException(status_code=400, detail="Empty image upload")
 
-    img_scores, metrics, trait_extraction = image_scores(image_bytes)
-    trait_based = trait_scores(trait_data)
-    llm_based = ollama_scores(LLM, metrics, trait_data, trait_extraction)
+    step1 = extract_visual_traits(image_bytes)
+    cr = step1["visible_traits"]["colour_ratios"]
+    metrics = {
+        "red_ratio":           cr["red"],
+        "orange_red_ratio":    cr.get("orange_red", 0.0),
+        "orange_yellow_ratio": cr["orange_yellow"],
+        "brown_ratio":         cr["brown"],
+        "white_ratio":         cr["white"],
+    }
 
-    ml_pred = trait_extraction.get("ml_prediction")
-    image_reasoning = (
-        ml_pred["reasoning"]
-        if ml_pred is not None
-        else "CNN unavailable — using visual trait scoring only."
-    )
-    image_prediction = build_prediction(
-        "image",
-        image_reasoning,
-        img_scores,
-    )
-    trait_prediction = build_prediction(
-        "trait",
-        "Scored from questionnaire selections (cap shape, color, gill type, stem type, habitat, season).",
-        trait_based,
-    )
-    llm_method = "ollama" if LLM is not None else "rule-based"
-    llm_prediction = build_prediction(
-        llm_method,
-        f"LLM reasoning via {llm_method} from combined image cues and selected traits.",
-        llm_based,
-    )
-
-    result = HYBRID.classify(
-        image_prediction=image_prediction,
-        trait_prediction=trait_prediction,
-        llm_prediction=llm_prediction,
-    )
-    return adapt_result(result.to_dict(), metrics, trait_extraction, SPECIES)
+    return {"trait_extraction": step1, "image_analysis": metrics}
 
 
 # ---------------------------------------------------------------------------
@@ -160,11 +142,20 @@ def step2_start(body: Step2StartRequest) -> Dict[str, Any]:
     and return the first question that requires human input, or a conclusion
     if the tree can be fully resolved automatically.
 
+    Optionally provide ``pre_answers`` — user-supplied answers keyed by exact
+    question text. These are consulted only when the image traits cannot
+    provide a conclusive auto-answer.
+
     Response shapes:
       {"status": "question",   "session_id": ..., "question": ..., "options": [...], ...}
       {"status": "conclusion", "session_id": ..., "species": ...,  "edibility": ..., ...}
     """
-    return KEY_TREE.start_session(body.session_id, body.visible_traits, body.ml_hint)
+    return KEY_TREE.start_session(
+        body.session_id,
+        body.visible_traits,
+        body.ml_hint,
+        body.pre_answers,
+    )
 
 
 @app.post("/identify/Species_tree_traversal/answer")
@@ -190,6 +181,58 @@ def step2_session_state(session_id: str) -> Dict[str, Any]:
     if state is None:
         raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found.")
     return state
+
+
+# ---------------------------------------------------------------------------
+# Step 2.5 — Standalone LLM prediction
+# ---------------------------------------------------------------------------
+
+def _build_observation_text(visible_traits: Dict[str, Any]) -> str:
+    """Build a natural-language mushroom description for the LLM from extracted traits."""
+    vt = visible_traits
+    dominant   = vt.get("dominant_color", "unknown")
+    cap_shape  = vt.get("cap_shape", "unknown")
+    texture    = vt.get("surface_texture", "unknown")
+    has_ridges = vt.get("has_ridges", False)
+
+    lines = [
+        f"Cap colour: {dominant}.",
+        f"Cap shape: {cap_shape}, surface texture: {texture}.",
+        f"Gill/underside structure: {'ridges (false gills)' if has_ridges else 'unknown'}.",
+    ]
+    return " ".join(lines)
+
+
+@app.post("/identify/llm_predict")
+def llm_predict(body: LLMPredictRequest) -> Dict[str, Any]:
+    """
+    Standalone LLM consultation.
+
+    Takes only the ``visible_traits`` from Step 1, builds a natural-language
+    observation, and queries the Ollama LLM for a species prediction.
+
+    Returns 503 Service Unavailable if Ollama is not running.
+    """
+    if LLM is None:
+        raise HTTPException(
+            status_code=503,
+            detail="LLM service unavailable. Start Ollama with: ollama serve",
+        )
+
+    observation = _build_observation_text(body.visible_traits)
+    result = LLM.classify(observation)
+
+    return {
+        "top_species": result.top_species,
+        "confidence": round(result.top_confidence, 4),
+        "reasoning": result.reasoning,
+        "predictions": [
+            {"species": sp, "confidence": round(conf, 4), "reason": reason}
+            for sp, conf, reason in result.predictions
+        ],
+        "model_used": result.model_used,
+        "processing_time_ms": round(result.processing_time_ms, 2),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -262,4 +305,3 @@ def step4_finalize(body: Step4FinalizeRequest) -> Dict[str, Any]:
         body.Species_tree_traversal_result,
         body.comparison_result,
     )
-

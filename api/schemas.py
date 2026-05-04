@@ -11,6 +11,7 @@ class Step2StartRequest(BaseModel):
     session_id: Optional[str] = None
     visible_traits: Dict[str, Any]
     ml_hint: Optional[Dict[str, Any]] = None
+    pre_answers: Optional[Dict[str, str]] = None
 
 
 class Step2AnswerRequest(BaseModel):
@@ -27,3 +28,7 @@ class Step4FinalizeRequest(BaseModel):
     trait_extraction_result: Dict[str, Any]
     Species_tree_traversal_result: Dict[str, Any]
     comparison_result: Dict[str, Any]
+
+
+class LLMPredictRequest(BaseModel):
+    visible_traits: Dict[str, Any]

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "timestamp": "2026-05-01T12:45:09.549780",
+    "timestamp": "2026-05-04T20:58:31.330746",
     "total_images": 60,
     "methods": [
       "cnn",
@@ -16,7 +16,7 @@
       "top1_accuracy": 0.5,
       "top3_accuracy": 0.55,
       "macro_f1": 0.3641234496497654,
-      "mean_time_ms": 52.843009016676966,
+      "mean_time_ms": 68.11827221645217,
       "ece": 0.31341358522574114,
       "top1_ci": [
         0.367,
@@ -27,9 +27,9 @@
         0.683
       ],
       "ood": {
-        "id_avg_confidence": 0.9166370213031769,
-        "ood_avg_confidence": 0.7101901491483052,
-        "confidence_gap": 0.20644687215487167
+        "id_avg_confidence": 0.8993566870689392,
+        "ood_avg_confidence": 0.6930932426452636,
+        "confidence_gap": 0.2062634444236756
       }
     },
     "tree_auto": {
@@ -37,7 +37,7 @@
       "top1_accuracy": 0.717948717948718,
       "top3_accuracy": 0.717948717948718,
       "macro_f1": 0.4200036075036075,
-      "mean_time_ms": 242.0995356500062,
+      "mean_time_ms": 287.4020275003204,
       "ece": 0.0,
       "top1_ci": [
         0.562,
@@ -53,7 +53,7 @@
       "top1_accuracy": 0.68,
       "top3_accuracy": 0.68,
       "macro_f1": 0.5311147186147186,
-      "mean_time_ms": 0.10835236666556132,
+      "mean_time_ms": 0.11072643319494091,
       "ece": 0.0,
       "top1_ci": [
         0.545,
@@ -69,8 +69,8 @@
       "top1_accuracy": 0.03333333333333333,
       "top3_accuracy": 0.05,
       "macro_f1": 0.034920634920634915,
-      "mean_time_ms": 2.0681063166781164,
-      "ece": 0.5504166666666667,
+      "mean_time_ms": 2.2040672667571926,
+      "ece": 0.55375,
       "top1_ci": [
         0.0,
         0.083
@@ -85,8 +85,8 @@
       "top1_accuracy": 0.5833333333333334,
       "top3_accuracy": 0.5833333333333334,
       "macro_f1": 0.4904003267973856,
-      "mean_time_ms": 51.889096299995195,
-      "ece": 0.2163,
+      "mean_time_ms": 65.50560933343756,
+      "ece": 0.21804999999999997,
       "top1_ci": [
         0.45,
         0.717
@@ -142,35 +142,35 @@
         "confidence": 0.9941920638084412,
         "correct": true,
         "coverage": true,
-        "time_ms": 132.98955000004753
+        "time_ms": 85.88276600130484
       },
       "tree_auto": {
         "top1": "AM.MU",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 941.3542799999277
+        "time_ms": 1196.2908569985302
       },
       "tree_oracle": {
         "top1": "AM.MU",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.09443099997952231
+        "time_ms": 0.09393700020154938
       },
       "trait_db": {
         "top1": "HY.CA",
         "confidence": 0.75,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.2840139999971143
+        "time_ms": 2.3978159988473635
       },
       "multimodal_final": {
         "top1": "AM.MU",
         "confidence": 0.948,
         "correct": true,
         "coverage": true,
-        "time_ms": 57.09359500008304
+        "time_ms": 55.35859700103174
       }
     },
     {
@@ -180,35 +180,35 @@
         "confidence": 0.9985999464988708,
         "correct": true,
         "coverage": true,
-        "time_ms": 47.66596700005721
+        "time_ms": 51.51937899790937
       },
       "tree_auto": {
         "top1": "AM.MU",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 188.43757900003766
+        "time_ms": 226.16275299878907
       },
       "tree_oracle": {
         "top1": "AM.MU",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.08590999993884907
+        "time_ms": 0.0857659979374148
       },
       "trait_db": {
         "top1": "AR.ME",
         "confidence": 0.5,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.943100000062259
+        "time_ms": 2.0676029998867307
       },
       "multimodal_final": {
         "top1": "AM.MU",
         "confidence": 0.9,
         "correct": true,
         "coverage": true,
-        "time_ms": 48.94522100005361
+        "time_ms": 59.07740499969805
       }
     },
     {
@@ -218,35 +218,35 @@
         "confidence": 0.9855543375015259,
         "correct": true,
         "coverage": true,
-        "time_ms": 50.49526200002674
+        "time_ms": 53.45889099771739
       },
       "tree_auto": {
         "top1": "AM.MU",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 237.0825819999709
+        "time_ms": 263.4057959985512
       },
       "tree_oracle": {
         "top1": "AM.MU",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.05301300006976817
+        "time_ms": 0.05294000220601447
       },
       "trait_db": {
-        "top1": "AR.ME",
-        "confidence": 0.6,
+        "top1": "LA.DE",
+        "confidence": 0.75,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.8837999999732347
+        "time_ms": 1.9975520008301828
       },
       "multimodal_final": {
         "top1": "AM.MU",
-        "confidence": 1.0,
+        "confidence": 0.975,
         "correct": true,
         "coverage": true,
-        "time_ms": 48.72576700006448
+        "time_ms": 49.0595459996257
       }
     },
     {
@@ -256,35 +256,35 @@
         "confidence": 0.9915015697479248,
         "correct": true,
         "coverage": true,
-        "time_ms": 48.64492000001519
+        "time_ms": 54.91733199960436
       },
       "tree_auto": {
         "top1": "AM.MU",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 228.19818499999656
+        "time_ms": 315.5962169985287
       },
       "tree_oracle": {
         "top1": "AM.MU",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.1556849999815313
+        "time_ms": 0.15497899948968552
       },
       "trait_db": {
         "top1": "CR.CO",
         "confidence": 0.75,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.097178999974858
+        "time_ms": 2.226702999905683
       },
       "multimodal_final": {
         "top1": "AM.MU",
         "confidence": 0.927,
         "correct": true,
         "coverage": true,
-        "time_ms": 53.09201499994742
+        "time_ms": 72.45801799945184
       }
     },
     {
@@ -294,35 +294,35 @@
         "confidence": 0.9515292048454285,
         "correct": true,
         "coverage": true,
-        "time_ms": 50.313944000095034
+        "time_ms": 49.93424399799551
       },
       "tree_auto": {
         "top1": "AM.MU",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 252.02300099999775
+        "time_ms": 359.45860799984075
       },
       "tree_oracle": {
         "top1": "AM.MU",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.0808810000307858
+        "time_ms": 0.08157500269589946
       },
       "trait_db": {
         "top1": "LE.LU",
         "confidence": 0.65,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.0104300000411968
+        "time_ms": 2.1148859996173996
       },
       "multimodal_final": {
         "top1": "AM.MU",
         "confidence": 0.883,
         "correct": true,
         "coverage": true,
-        "time_ms": 49.693056999899454
+        "time_ms": 53.75991299661109
       }
     },
     {
@@ -332,35 +332,35 @@
         "confidence": 0.9716269969940186,
         "correct": true,
         "coverage": true,
-        "time_ms": 48.182613999983914
+        "time_ms": 48.32319900015136
       },
       "tree_auto": {
         "top1": "AM.VI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 229.53181200000472
+        "time_ms": 423.29462700217846
       },
       "tree_oracle": {
         "top1": "AM.VI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.08402399998885812
+        "time_ms": 0.08478800009470433
       },
       "trait_db": {
         "top1": "LE.LU",
         "confidence": 0.75,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.9159990000616745
+        "time_ms": 2.0293300003686454
       },
       "multimodal_final": {
         "top1": "AM.VI",
         "confidence": 0.89,
         "correct": true,
         "coverage": true,
-        "time_ms": 50.33773000002384
+        "time_ms": 58.99436199979391
       }
     },
     {
@@ -370,35 +370,35 @@
         "confidence": 0.9306858777999878,
         "correct": true,
         "coverage": true,
-        "time_ms": 50.332243000070775
+        "time_ms": 50.20243799663149
       },
       "tree_auto": {
         "top1": "AM.VI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 206.64572000009684
+        "time_ms": 183.995010000217
       },
       "tree_oracle": {
         "top1": "AM.VI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.08493199993608869
+        "time_ms": 0.08394999895244837
       },
       "trait_db": {
         "top1": "AR.ME",
         "confidence": 0.65,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.9403049999482391
+        "time_ms": 2.0765419976669364
       },
       "multimodal_final": {
         "top1": "AM.VI",
         "confidence": 0.876,
         "correct": true,
         "coverage": true,
-        "time_ms": 48.775707999993756
+        "time_ms": 48.700766998081235
       }
     },
     {
@@ -408,35 +408,35 @@
         "confidence": 0.9938498139381409,
         "correct": true,
         "coverage": true,
-        "time_ms": 51.6651750000392
+        "time_ms": 52.16828099946724
       },
       "tree_auto": {
         "top1": "AM.VI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 283.41299199996683
+        "time_ms": 302.1200629991654
       },
       "tree_oracle": {
         "top1": "AM.VI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.046656999984406866
+        "time_ms": 0.047631998313590884
       },
       "trait_db": {
         "top1": "LE.LU",
         "confidence": 0.75,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.8703210000694526
+        "time_ms": 2.0166190006420948
       },
       "multimodal_final": {
         "top1": "AM.VI",
         "confidence": 0.898,
         "correct": true,
         "coverage": true,
-        "time_ms": 63.94375700006094
+        "time_ms": 60.23566400108393
       }
     },
     {
@@ -446,35 +446,35 @@
         "confidence": 0.9993242025375366,
         "correct": true,
         "coverage": true,
-        "time_ms": 52.883697000083885
+        "time_ms": 51.85908999919775
       },
       "tree_auto": {
         "top1": "AM.VI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 267.6184370000101
+        "time_ms": 314.9894310008676
       },
       "tree_oracle": {
         "top1": "AM.VI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.06286099994667893
+        "time_ms": 0.06236900298972614
       },
       "trait_db": {
         "top1": "LE.LU",
         "confidence": 0.75,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.9236120000414303
+        "time_ms": 2.049933002126636
       },
       "multimodal_final": {
         "top1": "AM.VI",
         "confidence": 0.9,
         "correct": true,
         "coverage": true,
-        "time_ms": 53.205652999963604
+        "time_ms": 51.563592001912184
       }
     },
     {
@@ -484,35 +484,35 @@
         "confidence": 0.9887322187423706,
         "correct": true,
         "coverage": true,
-        "time_ms": 61.46000899991577
+        "time_ms": 48.06653000196093
       },
       "tree_auto": {
         "top1": "AM.VI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 236.0178740000265
+        "time_ms": 256.28519400197547
       },
       "tree_oracle": {
         "top1": "AM.VI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.058111000043936656
+        "time_ms": 0.05810899892821908
       },
       "trait_db": {
         "top1": "LE.LU",
         "confidence": 0.75,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.9278030000577928
+        "time_ms": 2.057337002042914
       },
       "multimodal_final": {
         "top1": "AM.VI",
         "confidence": 0.896,
         "correct": true,
         "coverage": true,
-        "time_ms": 55.7137309999689
+        "time_ms": 47.730032998515526
       }
     },
     {
@@ -522,35 +522,35 @@
         "confidence": 0.6321267485618591,
         "correct": false,
         "coverage": true,
-        "time_ms": 51.29122300002109
+        "time_ms": 60.8740179995948
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 243.01212299997133
+        "time_ms": 284.87914300058037
       },
       "tree_oracle": {
         "top1": "BO.BA",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.21519300003092212
+        "time_ms": 0.21769799786852673
       },
       "trait_db": {
         "top1": "GY.ES",
         "confidence": 0.675,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.0519189999959053
+        "time_ms": 2.1744619989476632
       },
       "multimodal_final": {
         "top1": "BO.BA",
         "confidence": 0.851,
         "correct": true,
         "coverage": true,
-        "time_ms": 54.10407400006534
+        "time_ms": 97.68215899748611
       }
     },
     {
@@ -560,35 +560,35 @@
         "confidence": 0.9974344372749329,
         "correct": true,
         "coverage": true,
-        "time_ms": 51.62117200006833
+        "time_ms": 53.09508400023333
       },
       "tree_auto": {
         "top1": "BO.BA",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 245.13382199995704
+        "time_ms": 255.02245199822937
       },
       "tree_oracle": {
         "top1": "BO.BA",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.08842399995501182
+        "time_ms": 0.08904800051823258
       },
       "trait_db": {
         "top1": "LE.LU",
         "confidence": 0.65,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.015808000010111
+        "time_ms": 2.107692002027761
       },
       "multimodal_final": {
         "top1": "BO.BA",
         "confidence": 0.919,
         "correct": true,
         "coverage": true,
-        "time_ms": 56.38124399990829
+        "time_ms": 67.04707700191648
       }
     },
     {
@@ -598,35 +598,35 @@
         "confidence": 0.768638014793396,
         "correct": true,
         "coverage": true,
-        "time_ms": 47.14184900001328
+        "time_ms": 60.335815000144066
       },
       "tree_auto": {
         "top1": "BO.BA",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 215.4133550000097
+        "time_ms": 240.02038800244918
       },
       "tree_oracle": {
         "top1": "BO.BA",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.08716700006061728
+        "time_ms": 0.08883899863576517
       },
       "trait_db": {
         "top1": "LE.LU",
         "confidence": 0.65,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.0292180000751614
+        "time_ms": 2.137864001269918
       },
       "multimodal_final": {
         "top1": "BO.BA",
         "confidence": 0.839,
         "correct": true,
         "coverage": true,
-        "time_ms": 50.58225900006619
+        "time_ms": 58.994082999561215
       }
     },
     {
@@ -636,35 +636,35 @@
         "confidence": 0.9864718914031982,
         "correct": true,
         "coverage": true,
-        "time_ms": 52.87315100008527
+        "time_ms": 59.75549800132285
       },
       "tree_auto": {
         "top1": "BO.BA",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 231.3653420000037
+        "time_ms": 292.40545900029247
       },
       "tree_oracle": {
         "top1": "BO.BA",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.12250899999344256
+        "time_ms": 0.12271300147403963
       },
       "trait_db": {
-        "top1": "AM.MU",
-        "confidence": 0.6,
+        "top1": "HY.RE",
+        "confidence": 0.525,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.9140429999424668
+        "time_ms": 2.277617997606285
       },
       "multimodal_final": {
         "top1": "BO.BA",
         "confidence": 0.915,
         "correct": true,
         "coverage": true,
-        "time_ms": 59.41449100009777
+        "time_ms": 62.556374999985565
       }
     },
     {
@@ -674,35 +674,35 @@
         "confidence": 0.5937023162841797,
         "correct": true,
         "coverage": true,
-        "time_ms": 46.056732000010925
+        "time_ms": 50.01351499959128
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 222.33580099998562
+        "time_ms": 612.6757169986377
       },
       "tree_oracle": {
         "top1": "BO.BA",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.06006700004945742
+        "time_ms": 0.06139100150903687
       },
       "trait_db": {
         "top1": "GY.ES",
         "confidence": 0.625,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.0986450000464174
+        "time_ms": 2.176835998398019
       },
       "multimodal_final": {
         "top1": "BO.BA",
         "confidence": 0.848,
         "correct": true,
         "coverage": true,
-        "time_ms": 55.166003000067576
+        "time_ms": 66.89328499851399
       }
     },
     {
@@ -712,35 +712,35 @@
         "confidence": 0.9762406945228577,
         "correct": true,
         "coverage": true,
-        "time_ms": 54.33117199993376
+        "time_ms": 51.39296400011517
       },
       "tree_auto": {
         "top1": "BO.ED",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 431.725637999989
+        "time_ms": 229.858583999885
       },
       "tree_oracle": {
         "top1": "BO.ED",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.1745439999467635
+        "time_ms": 0.17488400044385344
       },
       "trait_db": {
         "top1": "BO.ED",
         "confidence": 0.7,
         "correct": true,
         "coverage": true,
-        "time_ms": 2.1883260000095106
+        "time_ms": 2.2667220000585075
       },
       "multimodal_final": {
         "top1": "BO.ED",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 61.657856000010725
+        "time_ms": 99.13780599890742
       }
     },
     {
@@ -750,35 +750,35 @@
         "confidence": 0.8609898686408997,
         "correct": true,
         "coverage": true,
-        "time_ms": 48.06541400000697
+        "time_ms": 64.79641400073888
       },
       "tree_auto": {
         "top1": "BO.ED",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 200.99392499992064
+        "time_ms": 218.05284000220126
       },
       "tree_oracle": {
         "top1": "BO.ED",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.150168000004669
+        "time_ms": 0.15169699690886773
       },
       "trait_db": {
         "top1": "CR.CO",
         "confidence": 0.4,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.300219000062498
+        "time_ms": 2.2604370024055243
       },
       "multimodal_final": {
         "top1": "BO.ED",
         "confidence": 0.871,
         "correct": true,
         "coverage": true,
-        "time_ms": 54.245929999979126
+        "time_ms": 79.32306799921207
       }
     },
     {
@@ -788,35 +788,35 @@
         "confidence": 0.8509899377822876,
         "correct": true,
         "coverage": true,
-        "time_ms": 53.865721999954985
+        "time_ms": 59.3465029996878
       },
       "tree_auto": {
         "top1": "BO.ED",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 243.1221460000188
+        "time_ms": 295.60813500211225
       },
       "tree_oracle": {
         "top1": "BO.ED",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.19773199994688184
+        "time_ms": 0.19786300254054368
       },
       "trait_db": {
         "top1": "GY.ES",
         "confidence": 0.675,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.342406000025221
+        "time_ms": 2.273218000482302
       },
       "multimodal_final": {
         "top1": "BO.ED",
         "confidence": 0.928,
         "correct": true,
         "coverage": true,
-        "time_ms": 49.39747100002023
+        "time_ms": 63.87687800088315
       }
     },
     {
@@ -826,35 +826,35 @@
         "confidence": 0.9994930028915405,
         "correct": true,
         "coverage": true,
-        "time_ms": 48.22200800003884
+        "time_ms": 60.17022000014549
       },
       "tree_auto": {
         "top1": "BO.ED",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 188.72376900003474
+        "time_ms": 263.92402700003004
       },
       "tree_oracle": {
         "top1": "BO.ED",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.08367500004169415
+        "time_ms": 0.08450899986200966
       },
       "trait_db": {
         "top1": "CR.CO",
         "confidence": 0.4,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.1360120000508687
+        "time_ms": 2.181795000069542
       },
       "multimodal_final": {
         "top1": "BO.ED",
         "confidence": 0.92,
         "correct": true,
         "coverage": true,
-        "time_ms": 51.220226999930674
+        "time_ms": 49.93026699958136
       }
     },
     {
@@ -864,35 +864,35 @@
         "confidence": 0.999416708946228,
         "correct": true,
         "coverage": true,
-        "time_ms": 51.328101000081006
+        "time_ms": 54.03208500138135
       },
       "tree_auto": {
         "top1": "BO.ED",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 152.1388300000126
+        "time_ms": 196.59632600087207
       },
       "tree_oracle": {
         "top1": "BO.ED",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.05196500001147797
+        "time_ms": 0.05238099765847437
       },
       "trait_db": {
         "top1": "LE.LU",
         "confidence": 0.4,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.0529670000541955
+        "time_ms": 2.090441998007009
       },
       "multimodal_final": {
         "top1": "BO.ED",
         "confidence": 0.92,
         "correct": true,
         "coverage": true,
-        "time_ms": 47.18742199997905
+        "time_ms": 45.013668001047336
       }
     },
     {
@@ -902,35 +902,35 @@
         "confidence": 0.9856414198875427,
         "correct": true,
         "coverage": true,
-        "time_ms": 49.08473800003321
+        "time_ms": 50.028112000291
       },
       "tree_auto": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 240.02828400000453
+        "time_ms": 203.84669600025518
       },
       "tree_oracle": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.12865500002590124
+        "time_ms": 0.12816000162274577
       },
       "trait_db": {
         "top1": "LE.LU",
         "confidence": 0.45,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.043955999965874
+        "time_ms": 2.16349599941168
       },
       "multimodal_final": {
         "top1": "CA.CI",
         "confidence": 0.955,
         "correct": true,
         "coverage": true,
-        "time_ms": 55.28069100000721
+        "time_ms": 50.491587000578875
       }
     },
     {
@@ -940,35 +940,35 @@
         "confidence": 0.8202060461044312,
         "correct": true,
         "coverage": true,
-        "time_ms": 54.70044499998039
+        "time_ms": 234.80569899766124
       },
       "tree_auto": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 208.10412299999825
+        "time_ms": 325.3310810032417
       },
       "tree_oracle": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.18711600000642648
+        "time_ms": 0.18836399976862594
       },
       "trait_db": {
         "top1": "AR.ME",
         "confidence": 0.65,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.1411810000699916
+        "time_ms": 2.2414400009438396
       },
       "multimodal_final": {
         "top1": "CA.CI",
         "confidence": 0.937,
         "correct": true,
         "coverage": true,
-        "time_ms": 49.35249200002545
+        "time_ms": 49.11171799903968
       }
     },
     {
@@ -978,35 +978,35 @@
         "confidence": 0.8834784030914307,
         "correct": true,
         "coverage": true,
-        "time_ms": 50.38623699999789
+        "time_ms": 173.68367300150567
       },
       "tree_auto": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 227.79549400001997
+        "time_ms": 201.5517580002779
       },
       "tree_oracle": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.17279700000472076
+        "time_ms": 0.17425599799025804
       },
       "trait_db": {
         "top1": "GY.ES",
         "confidence": 0.625,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.183576999982506
+        "time_ms": 2.437905000988394
       },
       "multimodal_final": {
         "top1": "CA.CI",
         "confidence": 0.899,
         "correct": true,
         "coverage": true,
-        "time_ms": 54.55136599994148
+        "time_ms": 51.97859300096752
       }
     },
     {
@@ -1016,35 +1016,35 @@
         "confidence": 0.9769317507743835,
         "correct": true,
         "coverage": true,
-        "time_ms": 52.99754500003928
+        "time_ms": 55.27073299890617
       },
       "tree_auto": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 218.69604099993012
+        "time_ms": 181.9459869984712
       },
       "tree_oracle": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.08479199993871589
+        "time_ms": 0.08513800275977701
       },
       "trait_db": {
         "top1": "CR.CO",
         "confidence": 0.45,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.085373999989315
+        "time_ms": 2.278596002724953
       },
       "multimodal_final": {
         "top1": "CA.CI",
         "confidence": 0.932,
         "correct": true,
         "coverage": true,
-        "time_ms": 47.48971599997276
+        "time_ms": 95.15310999995563
       }
     },
     {
@@ -1054,35 +1054,35 @@
         "confidence": 0.9965016841888428,
         "correct": true,
         "coverage": true,
-        "time_ms": 48.190227999953095
+        "time_ms": 62.342305998754455
       },
       "tree_auto": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 241.42555100002028
+        "time_ms": 325.4905300018436
       },
       "tree_oracle": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.09806299999581825
+        "time_ms": 0.09861700164037757
       },
       "trait_db": {
         "top1": "CR.CO",
         "confidence": 0.5,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.086771999984194
+        "time_ms": 2.212594998127315
       },
       "multimodal_final": {
         "top1": "CA.CI",
         "confidence": 0.939,
         "correct": true,
         "coverage": true,
-        "time_ms": 52.046290000021145
+        "time_ms": 52.081679001275916
       }
     },
     {
@@ -1092,35 +1092,35 @@
         "confidence": 0.9999356269836426,
         "correct": true,
         "coverage": true,
-        "time_ms": 54.155231999970965
+        "time_ms": 53.48382499869331
       },
       "tree_auto": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 210.37683100007598
+        "time_ms": 290.08153800168657
       },
       "tree_oracle": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.16965500003607303
+        "time_ms": 0.1702049994491972
       },
       "trait_db": {
         "top1": "AR.ME",
         "confidence": 0.6,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.1487940000497474
+        "time_ms": 2.3156120005296543
       },
       "multimodal_final": {
         "top1": "CR.CO",
         "confidence": 0.97,
         "correct": true,
         "coverage": true,
-        "time_ms": 49.06647600000724
+        "time_ms": 65.11727299948689
       }
     },
     {
@@ -1130,35 +1130,35 @@
         "confidence": 0.9996955394744873,
         "correct": true,
         "coverage": true,
-        "time_ms": 52.106738000020414
+        "time_ms": 61.75919499946758
       },
       "tree_auto": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 208.96867699991617
+        "time_ms": 198.1823690002784
       },
       "tree_oracle": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.16448600001695013
+        "time_ms": 0.16615400090813637
       },
       "trait_db": {
         "top1": "AR.ME",
         "confidence": 0.35,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.158362999921337
+        "time_ms": 2.291306998813525
       },
       "multimodal_final": {
         "top1": "CR.CO",
         "confidence": 0.97,
         "correct": true,
         "coverage": true,
-        "time_ms": 53.74520999998822
+        "time_ms": 77.3511490006058
       }
     },
     {
@@ -1168,35 +1168,35 @@
         "confidence": 0.9999836683273315,
         "correct": true,
         "coverage": true,
-        "time_ms": 50.197377000017696
+        "time_ms": 58.07174700021278
       },
       "tree_auto": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 189.20396800001527
+        "time_ms": 234.19158500109916
       },
       "tree_oracle": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.089820999960466
+        "time_ms": 0.09058499927050434
       },
       "trait_db": {
         "top1": "PL.OS",
         "confidence": 0.45,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.0020489999978963
+        "time_ms": 2.148340001440374
       },
       "multimodal_final": {
         "top1": "CR.CO",
         "confidence": 0.97,
         "correct": true,
         "coverage": true,
-        "time_ms": 46.701580000103604
+        "time_ms": 46.33053799989284
       }
     },
     {
@@ -1206,35 +1206,35 @@
         "confidence": 0.9913821816444397,
         "correct": true,
         "coverage": true,
-        "time_ms": 47.98250999999709
+        "time_ms": 57.83777599936002
       },
       "tree_auto": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 213.03173100000095
+        "time_ms": 239.8881090011855
       },
       "tree_oracle": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.09533900004043971
+        "time_ms": 0.09680099901743233
       },
       "trait_db": {
         "top1": "CR.CO",
         "confidence": 0.4,
         "correct": true,
         "coverage": true,
-        "time_ms": 2.1059090000790093
+        "time_ms": 2.26267199832364
       },
       "multimodal_final": {
         "top1": "CR.CO",
         "confidence": 0.977,
         "correct": true,
         "coverage": true,
-        "time_ms": 51.27645400000347
+        "time_ms": 59.660027000063565
       }
     },
     {
@@ -1244,35 +1244,35 @@
         "confidence": 0.9986811280250549,
         "correct": true,
         "coverage": true,
-        "time_ms": 50.59605400003875
+        "time_ms": 68.45592700119596
       },
       "tree_auto": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 260.7936179999797
+        "time_ms": 229.5179669999925
       },
       "tree_oracle": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.07976300003065262
+        "time_ms": 0.09275099728256464
       },
       "trait_db": {
-        "top1": "AM.MU",
-        "confidence": 0.6,
+        "top1": "HY.RE",
+        "confidence": 0.525,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.9323430000213193
+        "time_ms": 2.1701309997297358
       },
       "multimodal_final": {
         "top1": "CR.CO",
-        "confidence": 0.9,
+        "confidence": 0.95,
         "correct": true,
         "coverage": true,
-        "time_ms": 48.21659599997474
+        "time_ms": 47.98034700070275
       }
     },
     {
@@ -1282,35 +1282,35 @@
         "confidence": 0.5544959902763367,
         "correct": true,
         "coverage": true,
-        "time_ms": 47.49652700002116
+        "time_ms": 66.44377799966605
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 229.70990399994662
+        "time_ms": 256.1734510018141
       },
       "tree_oracle": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 0.059926999938397785
+        "time_ms": 0.04965799962519668
       },
       "trait_db": {
         "top1": "GY.ES",
         "confidence": 0.625,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.036761999988812
+        "time_ms": 2.213013998698443
       },
       "multimodal_final": {
         "top1": "HY.PS",
         "confidence": 0.294,
         "correct": true,
         "coverage": true,
-        "time_ms": 52.82136499999979
+        "time_ms": 49.693641001795186
       }
     },
     {
@@ -1320,35 +1320,35 @@
         "confidence": 0.740403950214386,
         "correct": false,
         "coverage": true,
-        "time_ms": 50.86824200009232
+        "time_ms": 108.42930399667239
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 222.20948700010013
+        "time_ms": 184.16654500106233
       },
       "tree_oracle": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 0.048402999937025015
+        "time_ms": 0.04944800093653612
       },
       "trait_db": {
         "top1": "CR.CO",
         "confidence": 0.4,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.0549920000121347
+        "time_ms": 2.1766259997093584
       },
       "multimodal_final": {
         "top1": "CA.CI",
         "confidence": 0.359,
         "correct": false,
         "coverage": true,
-        "time_ms": 47.479517999931886
+        "time_ms": 45.10236699934467
       }
     },
     {
@@ -1358,35 +1358,35 @@
         "confidence": 0.624372661113739,
         "correct": false,
         "coverage": true,
-        "time_ms": 46.36852400005864
+        "time_ms": 117.99032599810744
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 193.68079000003036
+        "time_ms": 230.6527599976107
       },
       "tree_oracle": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 0.03583100010473572
+        "time_ms": 0.037294998037396
       },
       "trait_db": {
         "top1": "PL.OS",
         "confidence": 0.65,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.95979200009333
+        "time_ms": 2.0972849997633602
       },
       "multimodal_final": {
         "top1": "CR.CO",
         "confidence": 0.319,
         "correct": false,
         "coverage": true,
-        "time_ms": 48.43507300006422
+        "time_ms": 46.8125190018327
       }
     },
     {
@@ -1396,35 +1396,35 @@
         "confidence": 0.6323213577270508,
         "correct": false,
         "coverage": true,
-        "time_ms": 49.881116999927144
+        "time_ms": 77.73276199804968
       },
       "tree_auto": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 226.44324299994878
+        "time_ms": 287.295123001968
       },
       "tree_oracle": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.07906500002263783
+        "time_ms": 0.08108600013656542
       },
       "trait_db": {
         "top1": "AR.ME",
         "confidence": 0.6,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.0871909999868876
+        "time_ms": 2.269377000629902
       },
       "multimodal_final": {
         "top1": "CR.CO",
         "confidence": 0.861,
         "correct": false,
         "coverage": true,
-        "time_ms": 48.16644699997141
+        "time_ms": 45.68149699844071
       }
     },
     {
@@ -1434,35 +1434,35 @@
         "confidence": 0.802352786064148,
         "correct": false,
         "coverage": true,
-        "time_ms": 48.6918600000763
+        "time_ms": 60.9910730017873
       },
       "tree_auto": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 245.0983210000004
+        "time_ms": 229.85502500159782
       },
       "tree_oracle": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.07669000001442328
+        "time_ms": 0.07780400119372644
       },
       "trait_db": {
         "top1": "HY.RE",
         "confidence": 0.525,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.0034460000033505
+        "time_ms": 2.155254998797318
       },
       "multimodal_final": {
         "top1": "CA.CI",
         "confidence": 0.931,
         "correct": false,
         "coverage": true,
-        "time_ms": 52.69229099997119
+        "time_ms": 88.26619899991783
       }
     },
     {
@@ -1472,35 +1472,35 @@
         "confidence": 0.39321431517601013,
         "correct": false,
         "coverage": true,
-        "time_ms": 50.237677000041
+        "time_ms": 76.75246000144398
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 189.6234750000758
+        "time_ms": 236.00929399981396
       },
       "tree_oracle": {
         "top1": "Fjällig bläcksvamp",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.1973140000472995
+        "time_ms": 0.19870100004482083
       },
       "trait_db": {
         "top1": "PL.OS",
         "confidence": 0.6,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.124487999935809
+        "time_ms": 2.2484930013888516
       },
       "multimodal_final": {
         "top1": "CR.CO",
         "confidence": 0.788,
         "correct": false,
         "coverage": true,
-        "time_ms": 49.753265999925134
+        "time_ms": 79.97490499838023
       }
     },
     {
@@ -1510,35 +1510,35 @@
         "confidence": 0.6599205136299133,
         "correct": false,
         "coverage": true,
-        "time_ms": 49.454222000008485
+        "time_ms": 54.40923200148973
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 214.44345600002634
+        "time_ms": 215.1374280001619
       },
       "tree_oracle": {
         "top1": "Fjällig bläcksvamp",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.07340799993471592
+        "time_ms": 0.07382299736491404
       },
       "trait_db": {
         "top1": "AR.ME",
         "confidence": 0.75,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.9697110000151952
+        "time_ms": 2.129204000084428
       },
       "multimodal_final": {
         "top1": "AM.MU",
         "confidence": 0.881,
         "correct": false,
         "coverage": true,
-        "time_ms": 49.773799999911716
+        "time_ms": 69.74633199934033
       }
     },
     {
@@ -1548,35 +1548,35 @@
         "confidence": 0.6091099977493286,
         "correct": false,
         "coverage": true,
-        "time_ms": 49.36635599995043
+        "time_ms": 48.698599999625
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 229.48089700003038
+        "time_ms": 220.56568900006823
       },
       "tree_oracle": {
         "top1": "Fjällig bläcksvamp",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.0610450000522178
+        "time_ms": 0.06292800026130863
       },
       "trait_db": {
         "top1": "LE.LU",
         "confidence": 0.45,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.9808160000138741
+        "time_ms": 2.169711999158608
       },
       "multimodal_final": {
         "top1": "AM.VI",
         "confidence": 0.863,
         "correct": false,
         "coverage": true,
-        "time_ms": 47.16633099997125
+        "time_ms": 82.60285000142176
       }
     },
     {
@@ -1586,35 +1586,35 @@
         "confidence": 0.7366285920143127,
         "correct": false,
         "coverage": true,
-        "time_ms": 49.73919099995783
+        "time_ms": 51.167793997592526
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 228.94176199997673
+        "time_ms": 238.60734700065223
       },
       "tree_oracle": {
         "top1": "Fjällig bläcksvamp",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.18257499993978854
+        "time_ms": 0.18724600158748217
       },
       "trait_db": {
         "top1": "LE.LU",
         "confidence": 0.75,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.0663760000161346
+        "time_ms": 2.254080998682184
       },
       "multimodal_final": {
         "top1": "BO.ED",
         "confidence": 0.908,
         "correct": false,
         "coverage": true,
-        "time_ms": 50.96906400001444
+        "time_ms": 63.02829800188192
       }
     },
     {
@@ -1624,35 +1624,35 @@
         "confidence": 0.4055643081665039,
         "correct": false,
         "coverage": true,
-        "time_ms": 48.44307099995149
+        "time_ms": 51.87704000127269
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 188.30165800000032
+        "time_ms": 208.5532119999698
       },
       "tree_oracle": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 0.04966100004821783
+        "time_ms": 0.05245200009085238
       },
       "trait_db": {
-        "top1": "GA.MA",
-        "confidence": 0.5,
+        "top1": "GY.ES",
+        "confidence": 0.675,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.9370920000483238
+        "time_ms": 2.1211710009083617
       },
       "multimodal_final": {
         "top1": "BO.ED",
         "confidence": 0.242,
         "correct": false,
         "coverage": true,
-        "time_ms": 47.996583000099236
+        "time_ms": 46.55549999733921
       }
     },
     {
@@ -1662,35 +1662,35 @@
         "confidence": 0.44029751420021057,
         "correct": false,
         "coverage": true,
-        "time_ms": 50.76060999999754
+        "time_ms": 48.85413800002425
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 230.33860099997128
+        "time_ms": 212.33341100014513
       },
       "tree_oracle": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 0.10819099998116144
+        "time_ms": 0.11202700261492282
       },
       "trait_db": {
         "top1": "CR.CO",
         "confidence": 0.4,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.1259540000073684
+        "time_ms": 2.271961002406897
       },
       "multimodal_final": {
         "top1": "CR.CO",
         "confidence": 0.254,
         "correct": false,
         "coverage": true,
-        "time_ms": 48.75608399993325
+        "time_ms": 62.28929899953073
       }
     },
     {
@@ -1700,35 +1700,35 @@
         "confidence": 0.6666090488433838,
         "correct": false,
         "coverage": true,
-        "time_ms": 49.775092000004406
+        "time_ms": 63.227973001630744
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 213.9641160000565
+        "time_ms": 227.6820309998584
       },
       "tree_oracle": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 0.16148299994256377
+        "time_ms": 0.16769100329838693
       },
       "trait_db": {
         "top1": "GY.ES",
         "confidence": 0.625,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.1453019999171374
+        "time_ms": 2.29968799976632
       },
       "multimodal_final": {
         "top1": "BO.ED",
         "confidence": 0.333,
         "correct": false,
         "coverage": true,
-        "time_ms": 51.01502499996968
+        "time_ms": 51.40484000003198
       }
     },
     {
@@ -1738,35 +1738,35 @@
         "confidence": 0.8418999910354614,
         "correct": false,
         "coverage": true,
-        "time_ms": 50.87997500004349
+        "time_ms": 68.67124999916996
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 226.98142100000496
+        "time_ms": 493.52022300081444
       },
       "tree_oracle": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 0.09394300002441014
+        "time_ms": 0.09840799975791015
       },
       "trait_db": {
         "top1": "GO.GL",
         "confidence": 0.65,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.0343169999250676
+        "time_ms": 2.195553999627009
       },
       "multimodal_final": {
         "top1": "AM.VI",
         "confidence": 0.395,
         "correct": false,
         "coverage": true,
-        "time_ms": 47.37635800006501
+        "time_ms": 95.48912100217422
       }
     },
     {
@@ -1776,35 +1776,35 @@
         "confidence": 0.9462325572967529,
         "correct": false,
         "coverage": true,
-        "time_ms": 48.52269499997419
+        "time_ms": 56.23937199925422
       },
       "tree_auto": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 269.35788299999786
+        "time_ms": 316.27271600154927
       },
       "tree_oracle": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.09282500002427696
+        "time_ms": 0.09729000157676637
       },
       "trait_db": {
         "top1": "BO.ED",
         "confidence": 0.7,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.082999999970525
+        "time_ms": 2.2241190017666668
       },
       "multimodal_final": {
         "top1": "CR.CO",
         "confidence": 0.921,
         "correct": false,
         "coverage": true,
-        "time_ms": 49.79817699995692
+        "time_ms": 65.58479500017711
       }
     },
     {
@@ -1814,35 +1814,35 @@
         "confidence": 0.44525623321533203,
         "correct": false,
         "coverage": true,
-        "time_ms": 51.043832999994265
+        "time_ms": 57.1519269979035
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 265.7705530000385
+        "time_ms": 308.1048310014012
       },
       "tree_oracle": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 0.07040399998459179
+        "time_ms": 0.12767099906341173
       },
       "trait_db": {
         "top1": "GY.ES",
         "confidence": 0.675,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.9961810000950209
+        "time_ms": 2.163566001399886
       },
       "multimodal_final": {
         "top1": "BO.ED",
         "confidence": 0.256,
         "correct": false,
         "coverage": true,
-        "time_ms": 54.43409800000154
+        "time_ms": 46.67919100029394
       }
     },
     {
@@ -1852,35 +1852,35 @@
         "confidence": 0.7076542973518372,
         "correct": false,
         "coverage": true,
-        "time_ms": 51.798301999951946
+        "time_ms": 67.10553200173308
       },
       "tree_auto": {
         "top1": "CA.TU",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 206.2777770000821
+        "time_ms": 247.76279899742804
       },
       "tree_oracle": {
         "top1": "CA.TU",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.1705629999833036
+        "time_ms": 0.16580499868723564
       },
       "trait_db": {
         "top1": "GY.ES",
         "confidence": 0.625,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.188955000065107
+        "time_ms": 2.3355170014838222
       },
       "multimodal_final": {
         "top1": "CA.TU",
         "confidence": 0.868,
         "correct": false,
         "coverage": true,
-        "time_ms": 64.67720799992094
+        "time_ms": 65.01858599949628
       }
     },
     {
@@ -1890,35 +1890,35 @@
         "confidence": 0.7356734275817871,
         "correct": false,
         "coverage": true,
-        "time_ms": 64.68540299999859
+        "time_ms": 63.56565899841371
       },
       "tree_auto": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 227.82390400004715
+        "time_ms": 426.52720600017346
       },
       "tree_oracle": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.17349600000216014
+        "time_ms": 0.17453599866712466
       },
       "trait_db": {
         "top1": "AR.ME",
         "confidence": 0.35,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.17603400005828
+        "time_ms": 2.3392879993480165
       },
       "multimodal_final": {
         "top1": "CR.CO",
         "confidence": 0.877,
         "correct": false,
         "coverage": true,
-        "time_ms": 68.89021300003151
+        "time_ms": 231.7313359999389
       }
     },
     {
@@ -1928,35 +1928,35 @@
         "confidence": 0.8786346316337585,
         "correct": false,
         "coverage": true,
-        "time_ms": 49.611585999969066
+        "time_ms": 49.589225000090664
       },
       "tree_auto": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 325.17233299995496
+        "time_ms": 251.47252800161368
       },
       "tree_oracle": {
         "top1": "CR.CO",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.17831499997100764
+        "time_ms": 0.17781800124794245
       },
       "trait_db": {
         "top1": "CR.CO",
         "confidence": 0.45,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.237288999936027
+        "time_ms": 2.3480179988837335
       },
       "multimodal_final": {
         "top1": "CR.CO",
         "confidence": 0.948,
         "correct": false,
         "coverage": true,
-        "time_ms": 49.45383999995556
+        "time_ms": 132.58864100134815
       }
     },
     {
@@ -1966,35 +1966,35 @@
         "confidence": 0.6545741558074951,
         "correct": false,
         "coverage": true,
-        "time_ms": 55.25257800002237
+        "time_ms": 55.828911001299275
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 240.3146370000968
+        "time_ms": 234.26108100102283
       },
       "tree_oracle": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 0.17824500002916466
+        "time_ms": 0.17886600107885897
       },
       "trait_db": {
         "top1": "GY.ES",
         "confidence": 0.625,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.2117940000043745
+        "time_ms": 2.3124690014810767
       },
       "multimodal_final": {
         "top1": "BO.ED",
         "confidence": 0.329,
         "correct": false,
         "coverage": true,
-        "time_ms": 53.896496999982446
+        "time_ms": 61.41662400114001
       }
     },
     {
@@ -2004,35 +2004,35 @@
         "confidence": 0.5636760592460632,
         "correct": false,
         "coverage": true,
-        "time_ms": 47.98628399998961
+        "time_ms": 73.28536300337873
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 154.14971500001684
+        "time_ms": 465.0435399998969
       },
       "tree_oracle": {
         "top1": "Skålröksvamp",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.05678399998032546
+        "time_ms": 0.05817800047225319
       },
       "trait_db": {
         "top1": "HY.RE",
         "confidence": 0.675,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.9379309999294492
+        "time_ms": 2.0571269997162744
       },
       "multimodal_final": {
         "top1": "BO.ED",
         "confidence": 0.847,
         "correct": false,
         "coverage": true,
-        "time_ms": 52.32616299997517
+        "time_ms": 49.85853800098994
       }
     },
     {
@@ -2042,35 +2042,35 @@
         "confidence": 0.9136835336685181,
         "correct": false,
         "coverage": true,
-        "time_ms": 51.69325700001082
+        "time_ms": 71.6886340014753
       },
       "tree_auto": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 214.44579199999225
+        "time_ms": 272.2214729983534
       },
       "tree_oracle": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.11978400004863943
+        "time_ms": 0.13542399756261148
       },
       "trait_db": {
         "top1": "LE.LU",
         "confidence": 0.65,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.9828419999612379
+        "time_ms": 2.1458949995576404
       },
       "multimodal_final": {
         "top1": "CA.CI",
-        "confidence": 0.87,
+        "confidence": 0.91,
         "correct": false,
         "coverage": true,
-        "time_ms": 54.89724300002763
+        "time_ms": 60.855723000713624
       }
     },
     {
@@ -2080,35 +2080,35 @@
         "confidence": 0.7131523489952087,
         "correct": false,
         "coverage": true,
-        "time_ms": 48.677892999990036
+        "time_ms": 55.482284999015974
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 207.093795999981
+        "time_ms": 212.01339600156643
       },
       "tree_oracle": {
         "top1": "RA.BO",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.13249699998141296
+        "time_ms": 0.134445999719901
       },
       "trait_db": {
-        "top1": "AM.MU",
-        "confidence": 0.6,
+        "top1": "PL.OS",
+        "confidence": 0.45,
         "correct": false,
         "coverage": true,
-        "time_ms": 1.972225000031358
+        "time_ms": 2.1906649999436922
       },
       "multimodal_final": {
         "top1": "RA.BO",
         "confidence": 0.84,
         "correct": true,
         "coverage": true,
-        "time_ms": 48.99956499991731
+        "time_ms": 59.92032800349989
       }
     },
     {
@@ -2118,35 +2118,35 @@
         "confidence": 0.9106760025024414,
         "correct": false,
         "coverage": true,
-        "time_ms": 54.03985200007355
+        "time_ms": 71.94355799947516
       },
       "tree_auto": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 240.96609499997612
+        "time_ms": 217.42936600276153
       },
       "tree_oracle": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.11419700001624733
+        "time_ms": 0.1147499970102217
       },
       "trait_db": {
-        "top1": "GA.MA",
-        "confidence": 0.5,
+        "top1": "GY.ES",
+        "confidence": 0.675,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.0320830000173373
+        "time_ms": 2.1862649991817307
       },
       "multimodal_final": {
         "top1": "CA.CI",
-        "confidence": 0.889,
+        "confidence": 0.929,
         "correct": false,
         "coverage": true,
-        "time_ms": 52.182700000003024
+        "time_ms": 59.113723000336904
       }
     },
     {
@@ -2156,35 +2156,35 @@
         "confidence": 0.9094464778900146,
         "correct": false,
         "coverage": true,
-        "time_ms": 59.76835999990726
+        "time_ms": 52.26403499909793
       },
       "tree_auto": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 242.8253790000099
+        "time_ms": 303.8168829989445
       },
       "tree_oracle": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.07578200006719271
+        "time_ms": 0.07766499766148627
       },
       "trait_db": {
         "top1": "GY.ES",
         "confidence": 0.625,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.128329000015583
+        "time_ms": 2.2130840006866492
       },
       "multimodal_final": {
         "top1": "CA.CI",
         "confidence": 0.908,
         "correct": false,
         "coverage": true,
-        "time_ms": 48.408044999973754
+        "time_ms": 72.07961300082388
       }
     },
     {
@@ -2194,35 +2194,35 @@
         "confidence": 0.7090601921081543,
         "correct": false,
         "coverage": true,
-        "time_ms": 71.48792400005277
+        "time_ms": 48.805597001774004
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 242.41413400000056
+        "time_ms": 313.935803998902
       },
       "tree_oracle": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 0.09736499998780346
+        "time_ms": 0.0977790004981216
       },
       "trait_db": {
         "top1": "GY.ES",
         "confidence": 0.675,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.0106399999804125
+        "time_ms": 2.1430319975479506
       },
       "multimodal_final": {
         "top1": "CA.CI",
         "confidence": 0.348,
         "correct": false,
         "coverage": true,
-        "time_ms": 50.59364800001731
+        "time_ms": 93.65297500335146
       }
     },
     {
@@ -2232,35 +2232,35 @@
         "confidence": 0.9696539044380188,
         "correct": false,
         "coverage": true,
-        "time_ms": 63.891611000030935
+        "time_ms": 55.5061699997168
       },
       "tree_auto": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 250.3985160000184
+        "time_ms": 253.14119399990886
       },
       "tree_oracle": {
         "top1": "CA.CI",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.07773799995902664
+        "time_ms": 0.07982899842318147
       },
       "trait_db": {
         "top1": "AR.ME",
         "confidence": 0.35,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.1726820000367297
+        "time_ms": 2.2579220021725632
       },
       "multimodal_final": {
         "top1": "CA.CI",
         "confidence": 0.929,
         "correct": false,
         "coverage": true,
-        "time_ms": 47.31328799994117
+        "time_ms": 65.39999300002819
       }
     },
     {
@@ -2270,35 +2270,35 @@
         "confidence": 0.5479801893234253,
         "correct": false,
         "coverage": true,
-        "time_ms": 47.607163000066066
+        "time_ms": 51.19719800131861
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 276.2164539999503
+        "time_ms": 293.17840799922124
       },
       "tree_oracle": {
         "top1": "SP.CR",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.11098499999206979
+        "time_ms": 0.11272499978076667
       },
       "trait_db": {
         "top1": "LE.LU",
         "confidence": 0.6,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.0754560000568745
+        "time_ms": 2.2040040021238383
       },
       "multimodal_final": {
         "top1": "SP.CR",
         "confidence": 0.762,
         "correct": true,
         "coverage": true,
-        "time_ms": 51.04875999995784
+        "time_ms": 50.87473999810754
       }
     },
     {
@@ -2308,35 +2308,35 @@
         "confidence": 0.5224258899688721,
         "correct": false,
         "coverage": true,
-        "time_ms": 52.584204999902795
+        "time_ms": 154.68315399994026
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 216.7355440000165
+        "time_ms": 226.65228299956652
       },
       "tree_oracle": {
         "top1": "SP.CR",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.11678199996367766
+        "time_ms": 0.12843999866163358
       },
       "trait_db": {
         "top1": "CR.CO",
         "confidence": 0.4,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.1900030000097104
+        "time_ms": 2.3326529990299605
       },
       "multimodal_final": {
         "top1": "SP.CR",
         "confidence": 0.753,
         "correct": true,
         "coverage": true,
-        "time_ms": 48.2063309999603
+        "time_ms": 50.41664599775686
       }
     },
     {
@@ -2346,35 +2346,35 @@
         "confidence": 0.587315559387207,
         "correct": false,
         "coverage": true,
-        "time_ms": 47.731906999956664
+        "time_ms": 127.53263099875767
       },
       "tree_auto": {
         "top1": null,
         "confidence": null,
         "correct": false,
         "coverage": false,
-        "time_ms": 185.0093850000576
+        "time_ms": 272.97667599850683
       },
       "tree_oracle": {
         "top1": "SP.CR",
         "confidence": 1.0,
         "correct": true,
         "coverage": true,
-        "time_ms": 0.08332499999141874
+        "time_ms": 0.08541699935449287
       },
       "trait_db": {
         "top1": "GY.ES",
         "confidence": 0.625,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.189444000009644
+        "time_ms": 2.3587739997310564
       },
       "multimodal_final": {
         "top1": "SP.CR",
         "confidence": 0.776,
         "correct": true,
         "coverage": true,
-        "time_ms": 50.96389800007728
+        "time_ms": 46.16906400042353
       }
     },
     {
@@ -2384,35 +2384,35 @@
         "confidence": 0.8589913249015808,
         "correct": false,
         "coverage": true,
-        "time_ms": 52.40819499999816
+        "time_ms": 84.0980929970101
       },
       "tree_auto": {
         "top1": "AM.MU",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 259.071580000068
+        "time_ms": 228.09068000060506
       },
       "tree_oracle": {
         "top1": "AM.MU",
         "confidence": 1.0,
         "correct": false,
         "coverage": true,
-        "time_ms": 0.11608299996623828
+        "time_ms": 0.11028099834220484
       },
       "trait_db": {
         "top1": "GY.ES",
         "confidence": 0.625,
         "correct": false,
         "coverage": true,
-        "time_ms": 2.1608079999850816
+        "time_ms": 2.326715999515727
       },
       "multimodal_final": {
         "top1": "AM.MU",
         "confidence": 0.851,
         "correct": false,
         "coverage": true,
-        "time_ms": 48.24481699995431
+        "time_ms": 49.68009200092638
       }
     }
   ]

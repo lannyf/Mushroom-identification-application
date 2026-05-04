@@ -14,7 +14,7 @@ Public API
   engine = KeyTreeEngine(xml_path)
 
   # Start a new session using Step 1 output
-  result = engine.start_session(session_id, visible_traits)
+  result = engine.start_session(session_id, visible_traits, ml_hint=None, pre_answers=None)
 
   # Provide a user answer and continue
   result = engine.answer(session_id, answer)
@@ -414,6 +414,7 @@ class TraversalSession:
     visible_traits: Dict[str, Any]     # Step 1 output
     tree_compatibility: Dict[str, Any]
     ml_hint: Optional[Dict[str, Any]] = field(default=None)
+    pre_answers: Dict[str, str] = field(default_factory=dict)  # user-supplied answers
     path: List[str] = field(default_factory=list)       # answers chosen so far
     auto_answered: List[Dict] = field(default_factory=list)  # auto-resolved Q→A
 
@@ -441,6 +442,7 @@ class KeyTreeEngine:
         session_id: Optional[str],
         visible_traits: Dict[str, Any],
         ml_hint: Optional[Dict[str, Any]] = None,
+        pre_answers: Optional[Dict[str, str]] = None,
     ) -> Dict[str, Any]:
         """
         Begin a new traversal session using Step 1 visible_traits.
@@ -449,6 +451,9 @@ class KeyTreeEngine:
             session_id: Optional existing session ID.
             visible_traits: Structured traits from visual_trait_extractor.extract().
             ml_hint: Optional CNN hint dict with ``top_species`` and ``confidence``.
+            pre_answers: Optional user-supplied answers keyed by question text.
+                         Only used when visible_traits cannot provide a conclusive
+                         auto-answer.
 
         Returns the first question the user needs to answer (or a conclusion
         if the tree can be traversed entirely from the image data).
@@ -485,6 +490,7 @@ class KeyTreeEngine:
             visible_traits=visible_traits,
             tree_compatibility=compatibility,
             ml_hint=ml_hint,
+            pre_answers=pre_answers or {},
         )
         self._sessions[sid] = session
         logger.debug("New session %s", sid)
@@ -509,10 +515,13 @@ class KeyTreeEngine:
     # ------------------------------------------------------------------
     def _advance(self, session: TraversalSession) -> Dict[str, Any]:
         """
-        Try to auto-answer the current question; if not possible return it
-        to the caller.
+        Try to auto-answer the current question from visible_traits first;
+        if not possible, fall back to pre_answers; if still not possible,
+        return the question to the caller.
         """
         options = [c.answer for c in session.current.conditions]
+
+        # 1. Try auto-answer from image-derived visible_traits
         auto = _try_auto_answer(
             session.current.question,
             options,
@@ -528,6 +537,18 @@ class KeyTreeEngine:
             })
             return self._step(session, auto)
 
+        # 2. Fall back to user-supplied pre_answers (complementary only)
+        pre = session.pre_answers.get(session.current.question)
+        if pre and pre in options:
+            logger.debug("Pre-answer: '%s' → '%s'", session.current.question, pre)
+            session.auto_answered.append({
+                "question": session.current.question,
+                "answer":   pre,
+                "source":   "user_pre_answer",
+            })
+            return self._step(session, pre)
+
+        # 3. Cannot resolve — ask the user
         return {
             "status":       "question",
             "session_id":   session.session_id,
